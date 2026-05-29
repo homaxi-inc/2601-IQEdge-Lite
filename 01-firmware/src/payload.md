@@ -52,15 +52,29 @@
 
 ---
 
-## Payload v2
+## Payload v2 (MQTT `device/status` — cloud + dashboard)
+
+Firmware **v2.2.3.22+** emits **flat fields** required by `SaveDeviceStatus` (`deviceId`, `soc`, `battery_voltage`, `solar_power`, `load_power`, `total_yield_kwh`, `today_yield_kwh`, `days_running`, `reporting_mode`, `status`, `data_stale`, `chipid`) **and** nested v1/v2 blocks below.
 
 ```json
 {
   "device": "IQEdge",
   "mac": "00:4B:12:2F:15:88",
+  "chipid": "88152F124B00",
+  "deviceId": "HQ2443XPTQY",
   "is_reconciliation": false,
-  "state": "RUNNING",
-  "timestamp": "2026-03-19T21:22:32Z",
+  "state": "NORMAL",
+  "status": "running",
+  "data_stale": false,
+  "reporting_mode": "NORMAL",
+  "timestamp": "2026-03-19 21:22:32 UTC",
+  "soc": 100,
+  "battery_voltage": 13.8,
+  "solar_power": 13.0,
+  "load_power": 12.42,
+  "total_yield_kwh": 6.25,
+  "today_yield_kwh": 0.03,
+  "days_running": 218,
   "battery": {
     "voltage": 13.8,
     "soc": 100

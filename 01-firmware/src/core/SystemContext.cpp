@@ -41,6 +41,14 @@ const char* SystemContext::stateToString(SystemState s) const {
     }
 }
 
+const char* SystemContext::reportingModeToString(ReportingMode m) const {
+    switch (m) {
+        case ReportingMode::NIGHT: return "NIGHT";
+        case ReportingMode::PEAK:  return "PEAK";
+        default:                   return "NORMAL";
+    }
+}
+
 // --- Energy Data (thread-safe) ---
 
 void SystemContext::setEnergySnapshot(const EnergySnapshot& snap) {
@@ -188,33 +196,6 @@ unsigned long SystemContext::getMpptDisconnectTime() const {
     xSemaphoreGive(_mutex);
     return res;
 }
-
-float SystemContext::getCloudTotalYieldKwh() const {
-    xSemaphoreTake(_mutex, portMAX_DELAY);
-    float res = _cloudTotalYieldKwh;
-    xSemaphoreGive(_mutex);
-    return res;
-}
-
-void SystemContext::setCloudTotalYieldKwh(float kwh) {
-    xSemaphoreTake(_mutex, portMAX_DELAY);
-    _cloudTotalYieldKwh = kwh;
-    xSemaphoreGive(_mutex);
-}
-
-bool SystemContext::isSyncedWithCloud() const {
-    xSemaphoreTake(_mutex, portMAX_DELAY);
-    bool res = _isSynced;
-    xSemaphoreGive(_mutex);
-    return res;
-}
-
-void SystemContext::setSyncedWithCloud(bool v) {
-    xSemaphoreTake(_mutex, portMAX_DELAY);
-    _isSynced = v;
-    xSemaphoreGive(_mutex);
-}
-
 
 // --- Adaptive Reporting ---
 

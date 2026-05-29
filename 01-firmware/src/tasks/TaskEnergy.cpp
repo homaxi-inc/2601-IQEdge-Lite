@@ -14,21 +14,12 @@ void taskEnergyEntry(void* param) {
     s_energy.begin(Serial2, *p->storage);
 
     Serial.printf("[TASK] Energy task running on Core %d\n", xPortGetCoreID());
-    const unsigned long bootMs = millis();
 
     for (;;) {
         // Feed the dog
         esp_task_wdt_reset();
 
-        auto& ctx = SystemContext::instance();
-        // Boot-time guard: avoid stressing UART path while MQTT/TLS stack is
-        // in first bring-up phase on the other core.
-        bool inBringupWindow = (millis() - bootMs) < 120000UL;
-        bool deferUartPoll = inBringupWindow && ctx.isWifiConnected() && !ctx.isMqttConnected();
-
-        if (!deferUartPoll) {
-            s_energy.poll();
-        }
+        s_energy.poll();
         s_energy.evaluatePowerPolicy();
 
         vTaskDelay(pdMS_TO_TICKS(100));  // 10 Hz sampling

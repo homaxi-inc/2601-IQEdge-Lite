@@ -1,0 +1,10 @@
+# Secrets — never commit
+.env
+
+# PlatformIO
+.pio/
+.vscode/.browse.c_cpp.db*
+
+# Local debug captures (see debug/README.md)
+debug/*
+!debug/README.md

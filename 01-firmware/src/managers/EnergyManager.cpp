@@ -3,8 +3,9 @@
 
 void EnergyManager::begin(HardwareSerial& serial, StorageManager& storage) {
     _storage = &storage;
-    // In V2.3 we moved VE.Direct to GPIO 4 (RX) and 5 (TX) to free 16/17 for GPS
-    _ved.begin(serial, 4, 5, VEDIRECT_BAUD);
+    _ved.begin(serial, VEDIRECT_RX_PIN, VEDIRECT_TX_PIN, VEDIRECT_BAUD);
+    Serial.printf("[NRG] VE.Direct UART RX=%d TX=%d @ %d baud\n",
+                  VEDIRECT_RX_PIN, VEDIRECT_TX_PIN, VEDIRECT_BAUD);
     Serial.println("[NRG] EnergyManager initialized");
 }
 
@@ -34,6 +35,9 @@ void EnergyManager::poll() {
     }
 
     if (DEBUG_MODE && (millis() - _lastDiagPrint > 30000)) {
+        if (!connected) {
+            Serial.println("[NRG] WARN: MPPT not responding on VE.Direct (check cable/power/pins)");
+        }
         _printDiagSummary();
         _lastDiagPrint = millis();
     }
@@ -48,6 +52,13 @@ void EnergyManager::evaluatePowerPolicy() {
     float vpv = snap.solar_voltage;
     float ppv = snap.solar_power;
     float vbat = snap.battery_voltage;
+
+    // No valid MPPT telemetry yet — do not infer HIBERNATE/NIGHT from zeroed snapshot
+    if (!ctx.isMpptConnected() || vbat < 1.0f) {
+        _nightCounter = 0;
+        ctx.setState(SystemState::NORMAL);
+        return;
+    }
 
     // --- Adaptive Reporting Mode Algorithm (Prudent Approach) ---
     // Exit Night Mode / Prevent entering if power is detected or voltage is high
@@ -65,13 +76,17 @@ void EnergyManager::evaluatePowerPolicy() {
             }
         }
     } 
-    // Enter Night Mode: Must be low voltage AND zero power for ~15 mins
+    // Enter Night Mode: low V/PV for ~15 min (counter ticks every MPPT_CHECK_INTERVAL_MS)
     else if (vpv < NIGHT_V_THRESHOLD && ppv < 0.1f) {
-        if (_nightCounter < NIGHT_CONFIRM_COUNT) {
-            _nightCounter++;
-            if (_nightCounter == NIGHT_CONFIRM_COUNT) {
-                Serial.println("[NRG] NIGHT confirmed (15m dark) -> Switching to Conservative reporting (30 min)");
-                ctx.setReportingMode(ReportingMode::NIGHT);
+        unsigned long now = millis();
+        if (now - _lastNightTickMs >= MPPT_CHECK_INTERVAL_MS) {
+            _lastNightTickMs = now;
+            if (_nightCounter < NIGHT_CONFIRM_COUNT) {
+                _nightCounter++;
+                if (_nightCounter == NIGHT_CONFIRM_COUNT) {
+                    Serial.println("[NRG] NIGHT confirmed (15m dark) -> Switching to Conservative reporting (30 min)");
+                    ctx.setReportingMode(ReportingMode::NIGHT);
+                }
             }
         }
     } else {
@@ -100,6 +115,13 @@ void EnergyManager::_updateSystemContext() {
     ctx.setEnergySnapshot(snap);
     ctx.setSystemDiag(diag);
     ctx.setHistoricalData(hist);
+
+    if (!_serialPublishTriggered && diag.mppt_serial.length() >= 3) {
+        _serialPublishTriggered = true;
+        ctx.requestUrgentPublish();
+        Serial.printf("[NRG] MPPT serial ready (%s) -> urgent cloud publish\n",
+                      diag.mppt_serial.c_str());
+    }
 
     // --- V2.1 Day Rollover Ledger Persistence ---
     // If Day Sequence (HSDS) increases, MPPT has just finished a day.

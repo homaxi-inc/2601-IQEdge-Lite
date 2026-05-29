@@ -47,8 +47,7 @@ private:
     bool _ensureWifi();
     bool _ensureMqtt();
     void _syncTime();
-    bool _fetchCloudStatus();
-    void _buildPayload(char* buf, size_t bufLen, bool isReconciliation = false, DailyLedgerEntry* entry = nullptr);
+    void _buildPayload(char* buf, size_t bufLen);
     unsigned long _nextBackoff(unsigned long current, unsigned long base, unsigned long max);
 
     // V2.2 OTA & MQTT Callback

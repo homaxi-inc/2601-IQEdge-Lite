@@ -25,7 +25,9 @@ private:
     StorageManager* _storage = nullptr;
     unsigned long _lastDiagPrint = 0;
     int _nightCounter = 0;           // Hysteresis for night detection
+    unsigned long _lastNightTickMs = 0;  // Rate-limit night counter (5s steps)
     bool _prevMpptConnected = false;  // Edge detection for disconnect event
+    bool _serialPublishTriggered = false;
 
     void _updateSystemContext();
     void _printDiagSummary();

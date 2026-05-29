@@ -1,5 +1,4 @@
 #include <ArduinoJson.h>
-#include <HTTPClient.h>
 #include "CommManager.h"
 #include "OtaManager.h"
 #include "../config/Config.h"
@@ -32,6 +31,8 @@ void CommManager::begin(StorageManager& storage) {
 }
 
 void CommManager::loop() {
+    esp_task_wdt_reset();
+
     // --- V2.2.1 Serial Provisioning Listener ---
     if (Serial.available()) {
         String cmd = Serial.readStringUntil('\n');
@@ -91,9 +92,15 @@ void CommManager::loop() {
 
     auto& ctx = SystemContext::instance();
 
-    if (ctx.consumeUrgentPublish()) {
-        publishStatus();
-        _lastPublish = millis();
+    if (_justConnected) {
+        _justConnected = false;
+        if (publishStatus()) _lastPublish = millis();
+    } else if (ctx.consumeUrgentPublish()) {
+        if (publishStatus()) {
+            _lastPublish = millis();
+        } else {
+            ctx.requestUrgentPublish();
+        }
     } else {
         unsigned long interval = ctx.getDynamicPublishInterval();
         if (millis() - _lastPublish >= interval || _lastPublish == 0) {
@@ -104,52 +111,45 @@ void CommManager::loop() {
     }
 }
 
+static void _formatCloudTimestamp(char* buf, size_t len) {
+    time_t now = time(nullptr);
+    struct tm ti;
+    gmtime_r(&now, &ti);
+    strftime(buf, len, "%Y-%m-%d %H:%M:%S UTC", &ti);
+}
+
+static void _formatChipId(uint64_t chipId, char* buf, size_t len) {
+    snprintf(buf, len, "%012llX", (unsigned long long)chipId);
+}
+
 bool CommManager::publishStatus() {
+    esp_task_wdt_reset();
     if (!_mqtt.connected()) return false;
 
     auto& ctx = SystemContext::instance();
-    auto hist = ctx.getHistoricalData();
-    
-    if (!ctx.isSyncedWithCloud() && isWifiConnected()) {
-        _fetchCloudStatus();
+    String serial = ctx.getSystemDiag().mppt_serial;
+
+    // SaveDeviceStatus keys DynamoDB/Timestream by MPPT serial (deviceId)
+    if (serial.length() < 3) {
+        Serial.println("[COM] SKIP publish: deviceId (MPPT SER#) not available yet");
+        return false;
     }
 
-    if (ctx.isSyncedWithCloud() && _storage) {
-        DailyLedgerEntry ledger[30];
-        int count = _storage->loadLedger(ledger, 30);
-        float cloudH19kwh = ctx.getCloudTotalYieldKwh();
-
-        for (int i = 0; i < count; i++) {
-            float entryH19kwh = (float)ledger[i].total_yield_wh / 1000.0f;
-            if (entryH19kwh > (cloudH19kwh + 0.01f)) {
-                char reconBuf[2048];
-                _buildPayload(reconBuf, sizeof(reconBuf), true, &ledger[i]);
-                if (_mqtt.publish(MQTT_TOPIC_STATUS, reconBuf)) {
-                    cloudH19kwh = entryH19kwh;
-                    ctx.setCloudTotalYieldKwh(cloudH19kwh);
-                    vTaskDelay(pdMS_TO_TICKS(100));
-                }
-            }
-        }
+    if (!ctx.isMpptConnected()) {
+        Serial.println("[COM] SKIP publish: MPPT data stale / disconnected");
+        return false;
     }
 
     char buf[2048];
-    bool isReconciliation = false;
-    float currentH19kwh = (float)hist.total_yield_wh / 1000.0f;
-
-    if (ctx.isSyncedWithCloud() && currentH19kwh > (ctx.getCloudTotalYieldKwh() + 0.01f)) {
-        isReconciliation = true;
-    }
-
-    _buildPayload(buf, sizeof(buf), isReconciliation);
+    _buildPayload(buf, sizeof(buf));
     Serial.printf("[COM] Publishing payload (%d bytes) to topic: %s\n", strlen(buf), MQTT_TOPIC_STATUS);
-    if (DEBUG_MODE) Serial.println(buf);
     
+    esp_task_wdt_reset();
     bool ok = _mqtt.publish(MQTT_TOPIC_STATUS, buf);
+    esp_task_wdt_reset();
     
     if (ok) {
         Serial.println("[COM] Publish OK");
-        if (isReconciliation) ctx.setCloudTotalYieldKwh(currentH19kwh);
     } else {
         Serial.printf("[COM] Publish FAILED, MQTT state=%d\n", _mqtt.state());
     }
@@ -157,36 +157,8 @@ bool CommManager::publishStatus() {
     return ok;
 }
 
-bool CommManager::_fetchCloudStatus() {
-    auto& ctx = SystemContext::instance();
-    String serial = ctx.getSystemDiag().mppt_serial;
-    if (serial.length() < 3) return false;
-
-    String url = String(IQWATCH_BASE_URL) + "/devices/" + serial + "/status";
-    HTTPClient http;
-    http.begin(url);
-    // Note: API key is typically handled via build flags or Config.h
-#ifdef IQWATCH_API_KEY
-    http.addHeader("x-api-key", IQWATCH_API_KEY);
-#endif
-    
-    int httpCode = http.GET();
-    bool success = false;
-    if (httpCode == 200) {
-        String payload = http.getString();
-        StaticJsonDocument<2048> doc;
-        if (!deserializeJson(doc, payload)) {
-            float cloudYield = doc["total_yield_kwh"] | 0.0f;
-            ctx.setCloudTotalYieldKwh(cloudYield);
-            ctx.setSyncedWithCloud(true);
-            success = true;
-        }
-    }
-    http.end();
-    return success;
-}
-
 bool CommManager::_ensureWifi() {
+    esp_task_wdt_reset();
     if (WiFi.status() == WL_CONNECTED) {
         SystemContext::instance().setWifiConnected(true);
         return true;
@@ -215,6 +187,7 @@ bool CommManager::_ensureWifi() {
 }
 
 bool CommManager::_ensureMqtt() {
+    esp_task_wdt_reset();
     if (_mqtt.connected()) return true;
     
     // We are not connected. Ensure the context flag is cleared.
@@ -246,7 +219,9 @@ bool CommManager::_ensureMqtt() {
 
     _mqttLastAttempt = now_ms;
     Serial.printf("[COM] MQTT: Connecting to %s:%d... (Time: %ld)\n", AWS_MQTT_ENDPOINT, AWS_MQTT_PORT, (long)now_utc);
+    esp_task_wdt_reset();
     if (_mqtt.connect(_clientId.c_str())) {
+        esp_task_wdt_reset();
         _mqtt.subscribe(MQTT_TOPIC_CMD);
         _mqtt.subscribe(_jobTopicNotify.c_str());
         _mqtt.subscribe(_jobTopicGet.c_str());
@@ -331,17 +306,43 @@ void CommManager::_handleJob(char* payload, unsigned int length) {
     }
 }
 
-void CommManager::_buildPayload(char* buf, size_t bufLen, bool isReconciliation, DailyLedgerEntry* entry) {
+void CommManager::_buildPayload(char* buf, size_t bufLen) {
     auto& ctx  = SystemContext::instance();
     auto  snap = ctx.getEnergySnapshot();
     auto  diag = ctx.getSystemDiag();
     auto  hist = ctx.getHistoricalData();
 
+    const float totalKwh = round((hist.total_yield_wh / 1000.0) * 100) / 100.0;
+    const float todayKwh = round((hist.today_yield_wh / 1000.0) * 100) / 100.0;
+
     StaticJsonDocument<2048> doc;
-    doc["device"]           = DEVICE_NAME;
-    doc["mac"]              = ctx.mac;
-    doc["firmware_version"] = FIRMWARE_VERSION;
-    doc["is_reconciliation"] = isReconciliation;
+    doc["device"]            = DEVICE_NAME;
+    doc["mac"]               = ctx.mac;
+    doc["firmware_version"]  = FIRMWARE_VERSION;
+    doc["is_reconciliation"] = false;
+
+    char chipBuf[17];
+    _formatChipId(ctx.chipId, chipBuf, sizeof(chipBuf));
+    doc["chipid"] = chipBuf;
+
+    // --- Cloud ingest flat fields (SaveDeviceStatus / DeviceStatusToLambda) ---
+    doc["deviceId"]        = diag.mppt_serial;
+    doc["status"]          = "running";
+    doc["data_stale"]      = false;
+    doc["state"]           = ctx.stateToString(ctx.getState());
+    doc["reporting_mode"]  = ctx.reportingModeToString(ctx.getReportingMode());
+    doc["soc"]             = snap.battery_soc;
+    doc["battery_voltage"] = snap.battery_voltage;
+    doc["solar_power"]     = snap.solar_power;
+    doc["load_power"]      = snap.load_power;
+    doc["total_yield_kwh"] = totalKwh;
+    doc["today_yield_kwh"] = todayKwh;
+    doc["days_running"]    = hist.day_sequence;
+    doc["last_update"]     = (uint32_t)time(nullptr);
+
+    char tsCloud[64];
+    _formatCloudTimestamp(tsCloud, sizeof(tsCloud));
+    doc["timestamp"] = tsCloud;
 
     auto gpsSnap = ctx.getGpsSnapshot();
     if (gpsSnap.isValid) {
@@ -351,56 +352,34 @@ void CommManager::_buildPayload(char* buf, size_t bufLen, bool isReconciliation,
         gps["sats"] = gpsSnap.satellites;
     }
 
-    if (entry) {
-        doc["timestamp"] = entry->timestamp_utc;
-        doc["state"]     = "HIST_RECON";
-        JsonObject h = doc.createNestedObject("history");
-        h["total_yield_kwh"]     = round((entry->total_yield_wh / 1000.0) * 100) / 100.0;
-        h["today_yield_kwh"]     = round((entry->day_yield_wh / 1000.0) * 100) / 100.0;
-        h["max_power_w"]         = entry->max_power_w;
-        h["hsds"]                = entry->hsds;
-        h["days_running"]        = entry->hsds;
-        JsonObject sys = doc.createNestedObject("system");
-        sys["serial"] = diag.mppt_serial;
-        sys["firmware"] = diag.mppt_firmware;
-        sys["pid"] = diag.pid;
-    } else {
-        doc["state"] = ctx.stateToString(ctx.getState());
-        time_t now = time(nullptr);
-        char ts[64];
-        struct tm ti;
-        gmtime_r(&now, &ti);
-        strftime(ts, sizeof(ts), "%Y-%m-%dT%H:%M:%SZ", &ti);
-        doc["timestamp"] = ts;
+    // --- Nested blocks (dashboard / backward compatible with payload v1/v2) ---
+    JsonObject h = doc.createNestedObject("history");
+    h["total_yield_kwh"] = totalKwh;
+    h["today_yield_kwh"] = todayKwh;
+    h["max_power_w"]     = hist.max_power_w;
+    h["days_running"]    = hist.day_sequence;
 
-        JsonObject h = doc.createNestedObject("history");
-        h["total_yield_kwh"]     = round((hist.total_yield_wh / 1000.0) * 100) / 100.0;
-        h["today_yield_kwh"]     = round((hist.today_yield_wh / 1000.0) * 100) / 100.0;
-        h["max_power_w"]         = hist.max_power_w;
-        h["days_running"]        = hist.day_sequence;
+    JsonObject bat = doc.createNestedObject("battery");
+    bat["voltage"]           = snap.battery_voltage;
+    bat["current"]           = snap.battery_current;
+    bat["soc"]               = snap.battery_soc;
+    bat["charge_state"]      = snap.charge_state;
+    bat["charge_state_code"] = snap.charge_state_code;
 
-        JsonObject bat = doc.createNestedObject("battery");
-        bat["voltage"]           = snap.battery_voltage;
-        bat["current"]           = snap.battery_current;
-        bat["soc"]               = snap.battery_soc;
-        bat["charge_state"]      = snap.charge_state;
-        bat["charge_state_code"] = snap.charge_state_code;
+    JsonObject sol = doc.createNestedObject("solar");
+    sol["voltage"] = snap.solar_voltage;
+    sol["current"] = snap.solar_current;
+    sol["power"]   = snap.solar_power;
 
-        JsonObject sol = doc.createNestedObject("solar");
-        sol["voltage"]           = snap.solar_voltage;
-        sol["current"]           = snap.solar_current;
-        sol["power"]             = snap.solar_power;
+    JsonObject load = doc.createNestedObject("load");
+    load["power"]   = snap.load_power;
+    load["current"] = snap.load_current;
+    load["status"]  = snap.load_status;
 
-        JsonObject load = doc.createNestedObject("load");
-        load["power"]            = snap.load_power;
-        load["current"]          = snap.load_current;
-        load["status"]           = snap.load_status;
-
-        JsonObject sys = doc.createNestedObject("system");
-        sys["serial"]            = diag.mppt_serial;
-        sys["firmware"]          = diag.mppt_firmware;
-        sys["pid"]               = diag.pid;
-    }
+    JsonObject sys = doc.createNestedObject("system");
+    sys["serial"]   = diag.mppt_serial;
+    sys["firmware"] = diag.mppt_firmware;
+    sys["pid"]      = diag.pid;
 
     serializeJson(doc, buf, bufLen);
 }

@@ -33,6 +33,7 @@ void setup() {
     // --- Task Watchdog (Global) ---
     // Panic = true (trigger HW reset on timeout)
     esp_task_wdt_init(WDT_TIMEOUT_SEC, true);
+    esp_task_wdt_add(NULL);  // Arduino loop task must feed TWDT during long SSL/MQTT
 
     auto& ctx = SystemContext::instance();
     ctx.setState(SystemState::BOOT);
@@ -117,8 +118,7 @@ void setup() {
 }
 
 void loop() {
-    // Intentionally empty.
-    // All logic runs in FreeRTOS tasks.
-    // Arduino loop() task yields to scheduler.
+    // Feed TWDT for the Arduino loop task (Core 1); Comm SSL can starve idle otherwise.
+    esp_task_wdt_reset();
     vTaskDelay(pdMS_TO_TICKS(1000));
 }

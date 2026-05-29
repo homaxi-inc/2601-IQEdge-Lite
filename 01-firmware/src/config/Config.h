@@ -5,7 +5,7 @@
 // ============================================================
 
 #define DEVICE_NAME     "IQEdge V2.3"
-#define FIRMWARE_VERSION "v2.2.3.19"
+#define FIRMWARE_VERSION "v2.2.3.25"
 
 // --- Build Flags ---
 #define DEBUG_MODE          true
@@ -17,7 +17,7 @@
 // --- Pin Definitions ---
 #define LED_BUILTIN_PIN     2
 #define LED_STATUS_PIN      2
-#define VEDIRECT_RX_PIN     16
+#define VEDIRECT_RX_PIN     16  // HIL: VE.Direct UART (ESP32 RX=16, TX=17)
 #define VEDIRECT_TX_PIN     17
 #define VEDIRECT_BAUD       19200
 
@@ -30,7 +30,7 @@ constexpr const char* AWS_MQTT_ENDPOINT = "a3vcfgcj3um9l2-ats.iot.us-east-1.amaz
 constexpr uint16_t    AWS_MQTT_PORT     = 8883;
 constexpr const char* MQTT_TOPIC_STATUS = "device/status";
 constexpr const char* MQTT_TOPIC_CMD    = "device/command";
-#define IQWATCH_BASE_URL "https://1y9689tax0.execute-api.us-east-1.amazonaws.com/v1"
+// IQWatch REST API (1y9689tax0) is host/tools only — see tools/aws-verify, not used by firmware.
 
 // --- Timing ---
 constexpr unsigned long PUBLISH_INTERVAL_NORMAL_MS = 300000;   // 5 min (Default)

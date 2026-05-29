@@ -84,6 +84,7 @@ public:
     SystemState getState() const;
     void        setState(SystemState newState);
     const char* stateToString(SystemState s) const;
+    const char* reportingModeToString(ReportingMode m) const;
 
     // Adaptive Reporting
     ReportingMode getReportingMode() const;
@@ -123,12 +124,6 @@ public:
     void          setMpptDisconnectTime(unsigned long ms);
     unsigned long getMpptDisconnectTime() const;
 
-    // Cloud-sync state (Total Yield Reconciliation)
-    float getCloudTotalYieldKwh() const;
-    void  setCloudTotalYieldKwh(float kwh);
-    bool  isSyncedWithCloud() const;
-    void  setSyncedWithCloud(bool v);
-
     // Device identity (set once at boot)
     String mac;
     uint64_t chipId = 0;
@@ -148,8 +143,6 @@ private:
     GpsSnapshot _gpsSnap;
 
     int   _lastRecordedHsds   = -1; // Tracked to detect rollover
-    float _cloudTotalYieldKwh = -1.0f; // -1 means unknown/unsynced
-    bool  _isSynced           = false;
     bool _wifiOk  = false;
     bool _mqttOk  = false;
     bool _mpptOk  = false;
