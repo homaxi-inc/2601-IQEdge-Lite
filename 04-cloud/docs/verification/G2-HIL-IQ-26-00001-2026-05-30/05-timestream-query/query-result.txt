@@ -1,0 +1,20 @@
+# Timestream query result (008 script verify_g2_telemetry.py · 2026-05-30)
+# sys_id=IQ-26-00001  lookback=30m  → PASS
+
+OK: 10 row(s) (showing up to 25)
+
+time (UTC)           battery_soc_pct  solar_power_w  yield_total_kwh
+2026-05-30 20:47:27  62.5             51.0           35.59
+2026-05-30 20:46:27  56.5             38.0           35.59
+2026-05-30 20:45:27  56.5             37.0           35.59
+2026-05-30 20:44:27  55.0             32.0           35.59
+2026-05-30 20:43:27  58.0             39.0           35.59
+2026-05-30 20:42:27  56.5             39.0           35.59
+2026-05-30 20:40:27  56.5             40.0           35.59
+...
+
+measure_name: g2_energy
+component_id: HQ2513A69PJ
+cadence: ~60s (esp32dev HIL build)
+
+PASS at 2026-05-30T20:47:56Z

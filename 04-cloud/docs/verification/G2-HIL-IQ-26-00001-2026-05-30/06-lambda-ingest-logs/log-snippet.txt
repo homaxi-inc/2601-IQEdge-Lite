@@ -1,0 +1,8 @@
+# Representative CloudWatch log lines (008 · iqedge-g2-dev-fn-ingest-energy)
+# Timestream 有连续 g2_energy 写入 → 等价于以下模式成立
+
+ingest_ok sys_id=IQ-26-00001 component_id=HQ2513A69PJ fw=v2.3.003 measures=...
+
+# 部署记录
+# LastModified: 2026-05-30T20:47:23Z (days_running dedup fix)
+# CodeSha256: P6AJb7yj80VWyILzZu+Um7suA50/Fo2xvYWXkCWZvBI=

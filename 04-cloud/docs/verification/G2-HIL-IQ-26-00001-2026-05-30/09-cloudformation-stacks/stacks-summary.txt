@@ -1,0 +1,7 @@
+# CloudFormation G2 dev stacks — Bob 确认 OK · 2026-05-30
+# Region: us-east-1 · Account: 661631955220
+
+iqedge-g2-dev-foundation   → CREATE_COMPLETE / UPDATE_COMPLETE
+iqedge-g2-dev-storage      → CREATE_COMPLETE / UPDATE_COMPLETE
+iqedge-g2-dev-registry     → CREATE_COMPLETE / UPDATE_COMPLETE
+iqedge-g2-dev-ingest       → UPDATE_COMPLETE (Lambda updated 2026-05-30)

@@ -6,6 +6,13 @@
 
 ---
 
+## 2026-05-30 — Bob 控制台验收签收 · G2 HIL 关闭
+
+**验收**: [`verification/G2-HIL-IQ-26-00001-2026-05-30/SIGNOFF-2026-05-30.md`](verification/G2-HIL-IQ-26-00001-2026-05-30/SIGNOFF-2026-05-30.md) — Rule / Policy / Timestream / DDB / CFN / OTA **全部 OK**  
+**007+008**: v2.3.003 · G2 双发 · M4.7 端到端 · Legacy 并存
+
+---
+
 ## 2026-05-30 — M4.7 HIL 签收 · Lambda `days_running` 去重上线
 
 **007 完成**: [`NOTICE_007_to_008_IQ-26-00001_G2_DONE_2026-05-30.md`](../../01-firmware/report/NOTICE_007_to_008_IQ-26-00001_G2_DONE_2026-05-30.md) · 固件 **v2.3.003** · `verify_g2_telemetry.py` **PASS**（~60 s 间隔 · 6 rows/30m）  

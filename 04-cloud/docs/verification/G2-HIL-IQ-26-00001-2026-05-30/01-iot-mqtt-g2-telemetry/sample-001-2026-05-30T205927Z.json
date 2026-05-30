@@ -1,0 +1,53 @@
+{
+  "schema_version": "energy.telemetry.v1",
+  "sys_id": "IQ-26-00001",
+  "component_id": "HQ2513A69PJ",
+  "component_role": "mppt",
+  "domain": "energy",
+  "ingest_mode": "live",
+  "firmware_version": "v2.3.003",
+  "mac": "1C:69:20:B8:D7:F4",
+  "is_reconciliation": false,
+  "status": "running",
+  "data_stale": false,
+  "state": "NORMAL",
+  "reporting_mode": "NORMAL",
+  "chipid": "F4D7B820691C",
+  "timestamp": "2026-05-30T20:59:27Z",
+  "measures": {
+    "battery": {
+      "voltage_v": 13.21000004,
+      "current_a": 4.730000019,
+      "soc_pct": 71.00002289,
+      "charge_state": "Bulk",
+      "charge_state_code": 3
+    },
+    "solar": {
+      "voltage_v": 17.12999916,
+      "current_a": 3.852889776,
+      "power_w": 66
+    },
+    "load": {
+      "voltage_v": 13.21000004,
+      "current_a": 0.200000003,
+      "power_w": 2.64199996,
+      "status": "ON"
+    },
+    "yield": {
+      "total_kwh": 35.59999847,
+      "today_kwh": 0.200000003,
+      "days_running": 76,
+      "max_power_w": 76
+    }
+  },
+  "soc": 71.00002289,
+  "battery_voltage": 13.21000004,
+  "solar_power": 66,
+  "load_power": 2.64199996,
+  "total_yield_kwh": 35.59999847,
+  "today_yield_kwh": 0.200000003,
+  "legacy": {
+    "deviceId": "HQ2513A69PJ",
+    "device": "IQEdge_G2"
+  }
+}
