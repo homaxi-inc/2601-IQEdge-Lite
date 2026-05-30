@@ -5,7 +5,7 @@
   "description": "G2 JSON Schema validation — 09-contract",
   "scripts": {
     "validate:energy": "ajv validate -s schemas/energy/telemetry.v1.json -r schemas/common/g2-envelope.v1.json -d examples/energy/telemetry-iqwatch-live.v1.json --spec=draft2020 -c ajv-formats && ajv validate -s schemas/energy/telemetry.v1.json -r schemas/common/g2-envelope.v1.json -d examples/energy/telemetry-iqtrailer-cerbo-live.v1.json --spec=draft2020 -c ajv-formats",
-    "validate:registry": "ajv validate -s schemas/registry/device-record.v1.json -d examples/registry/hil-iq-26-00001.v1.json --spec=draft2020 -c ajv-formats"
+    "validate:registry": "ajv validate -s schemas/registry/device-record.v1.json -d examples/registry/hil-iq-26-00001.v1.json --spec=draft2020 -c ajv-formats && ajv validate -s schemas/registry/device-record.v1.json -d examples/iqtrailer/registry-record.v1.json --spec=draft2020 -c ajv-formats"
   },
   "devDependencies": {
     "ajv": "^8.17.1",

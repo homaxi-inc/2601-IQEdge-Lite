@@ -42,9 +42,11 @@ MPPT ×N ──► Cerbo GX (Venus OS · Modbus TCP Server)
 
 | 角色 | 范围 |
 |------|------|
-| **Bob / 现场集成** | Cerbo 配置 · Modbus 映射 · 台架验收 |
-| **008** | RUT↔AWS · G2 Topic · M4/M5 ingest · Legacy 双轨 |
-| **007** | **不总责**；仅 Trailer 上另有 ESP32 子系统时改 `01-firmware/` |
+| **007** | **主责** `05-integration/` — Cerbo / Venus OS · Modbus 映射 · **RUT / RutOS**（Modbus Client · Data to Server）· 台架验收 · EDGE-T1/T2/T3；`01-firmware/` 仍主责 ESP32 |
+| **008** | **云端对齐** — G2 Topic · IoT Policy/Thing · M4/M5 ingest · Legacy 双轨；与 007 联调 payload，**不另改 Schema**（`09-contract/`） |
+| **Bob** | 产品决策 · 现场资源 · 验收签收 |
+
+> **授权（Bob）**: 007 可读写 **`05-integration/`** 全目录；RUT/RutOS 底层协议以 007 专长为准，008 负责 AWS 侧契约与 ingest 闭环。
 
 ---
 
@@ -52,7 +54,7 @@ MPPT ×N ──► Cerbo GX (Venus OS · Modbus TCP Server)
 
 | 层 | 路径 |
 |----|------|
-| Energy payload | [`09-contract/schemas/energy/telemetry.v1.json`](../09-contract/schemas/energy/telemetry.v1.json) · `component_role=cerbo_gx` |
+| Energy payload | [`09-contract/schemas/energy/telemetry.v1.json`](../09-contract/schemas/energy/telemetry.v1.json) · `component_role=cerbo` |
 | 系统模型 §3.4 | [`02-backend/docs/G2_System_Model.md`](../02-backend/docs/G2_System_Model.md) |
 | M4/M5 里程碑 | [`04-cloud/docs/G2_Implementation_Task_Breakdown.md`](../04-cloud/docs/G2_Implementation_Task_Breakdown.md) |
 
@@ -62,10 +64,10 @@ MPPT ×N ──► Cerbo GX (Venus OS · Modbus TCP Server)
 
 | ID | 内容 | 状态 |
 |----|------|------|
-| EDGE-T1 | Cerbo Modbus 寄存器图 | ⬜ |
-| EDGE-T2 | RUT → G2 JSON 组装 + Topic | ⬜ |
+| EDGE-T1 | Cerbo Modbus 寄存器图 | ✅ MVP（ADR-012 D-9） |
+| EDGE-T2 | RUT Data to Server → G2 JSON | ⬜ |
 | EDGE-T3 | 台架验收（对齐 M4/M5） | ⬜ |
 
 ---
 
-*Bob · 008 协助 RUT/AWS 对齐 · ADR-011*
+*007 主责边缘集成 · 008 云端对齐 · ADR-011*

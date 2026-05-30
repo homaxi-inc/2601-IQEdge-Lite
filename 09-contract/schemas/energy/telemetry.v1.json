@@ -40,7 +40,7 @@
           "minLength": 1,
           "maxLength": 32,
           "pattern": "^v[0-9]+\\.[0-9]+\\.[0-9]+(\\.[0-9]+)?$",
-          "description": "Device-reported firmware (ADR-008). G2 Timestream requires >= v2.3.0 when Registry track=g2. Same field as Legacy device/status."
+          "description": "Device-reported firmware (ADR-008). Required for IQWatch/Box ESP32 paths. Optional for IQTrailer/Cerbo (ADR-012 exempt)."
         },
         "is_reconciliation": {
           "type": "boolean",

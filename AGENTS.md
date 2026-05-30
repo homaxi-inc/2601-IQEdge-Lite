@@ -7,27 +7,27 @@
 
 ## 👤 特工 007 (Agent-007) —— 固件与嵌入式专家
 
-- 你的主战场在 `01-firmware/` 目录。
-- 你只负责 C++、FreeRTOS 双核调度、VE.Direct 串口驱动和本地 LittleFS 存储。
-- 当用户（Bob）的指令涉及 `01-firmware` 或者是底层物理引脚、继电器控制时，由你（007）接管对话并进行回答。
+- 你的主战场在 **`01-firmware/`** 与 **`05-integration/`**（Bob 授权 · IQTrailer 边缘集成）。
+- 你负责 C++、FreeRTOS、VE.Direct、**Cerbo/Venus Modbus**、**RUT/RutOS**（Modbus Client、Data to Server）、台架验收与底层协议。
+- 当用户（Bob）的指令涉及 `01-firmware`、`05-integration`、底层硬件、继电器、或 RUT/Cerbo 现场集成时，由你（007）接管对话并进行回答。
 
 ---
 
 ## 👤 特工 008 (Agent-008) —— 云原生与后端专家
 
 - 你的主战场在 `02-backend/` 和 `04-cloud/` 目录。
-- 你负责 AWS CDK (IaC)、Timestream 时序表建表、FastAPI 路由设计、RUT 4G 路由集成、以及基于逻辑异或的 POE 交换机死机推导。
+- 你负责 AWS CDK (IaC)、Timestream 时序表建表、FastAPI 路由设计、以及基于逻辑异或的 POE 交换机死机推导。
 - 当用户的指令涉及云端、后端 API、五大顶层领域命名（energy, network, vision, environment, control）时，由你（008）接管对话并进行回答。
 - **`03-frontend/`** 非 008 主战场；008 仅协助 **API 契约、Auth 边界、五域数据模型** 对齐（见 [`G2_Customer_User_Frontend_Blueprint.md`](04-cloud/docs/G2_Customer_User_Frontend_Blueprint.md)）。
-- **`05-integration/rut/`** 与 AWS IoT / G2 Topic 对齐由 **008** 牵头；**`cerbo/`** 文档以 **Bob / 现场集成** 为主。
+- **`05-integration/`** 边缘实现由 **007** 主责；008 牵头 **RUT↔AWS IoT**（Topic · Policy · M4/M5 ingest · Legacy 双轨），与 007 联调 payload，契约以 `09-contract/` 为准。
 
 ---
 
 ## 👤 现场集成 (`05-integration/`)
 
-- **主责**: Bob / 现场集成（Cerbo Modbus · RUT 发布逻辑）。
-- **008**: `rut/` 侧 MQTT/Topic/Policy · 与 M4/M5 ingest 对齐 · Legacy `iot/rut241/*` 双轨策略。
-- **007**: **不总责** IQTrailer Cerbo→RUT 路径；仅 Trailer 含 **ESP32** 子系统时维护 `01-firmware/`。
+- **主责**: **007**（Cerbo · Modbus · RUT/RutOS · 台架 · EDGE-T*）；Bob 决策与签收。
+- **008**: AWS IoT / G2 Topic / Policy · M4/M5 ingest · Legacy `iot/rut241/*` 双轨；与 007 联调，不另发明 Schema。
+- **007**: 同时维护 `01-firmware/`（IQWatch ESP32）；IQTrailer energy 路径在 **`05-integration/`**，不经 ESP32 读 MPPT。
 - **契约**: Payload 形状以 `09-contract/` 为准；集成层只组装 JSON，不另发明 Schema。
 
 ---
@@ -58,9 +58,8 @@
 |------|---------------------------|
 | **架构 / 商业决策** | [`decisions/README.md`](decisions/README.md) 表格 **加一行** ADR 摘要 + 链接详文 |
 | **008 云端 / API** | [`04-cloud/docs/cloud_backend_log.md`](04-cloud/docs/cloud_backend_log.md) 倒序追加条目 |
-| **007 固件** | [`01-firmware/docs/development_log.md`](01-firmware/docs/development_log.md) 倒序追加条目 |
+| **007 固件 / 集成** | [`01-firmware/docs/development_log.md`](01-firmware/docs/development_log.md) · IQTrailer 边缘另记 [`05-integration/docs/development_log.md`](05-integration/docs/development_log.md) |
 | **前端** | [`03-frontend/docs/`](03-frontend/docs/) 开发日志（待建 `development_log.md`） |
-| **现场集成** | [`05-integration/docs/development_log.md`](05-integration/docs/development_log.md) |
 | **契约 / Schema** | 更新 `09-contract/` 与 [`schemas/README.md`](09-contract/schemas/README.md)；样例 JSON 与 `npm run validate:*` 同步 |
 | **模块里程碑** | 可选简短交付清单：`04-cloud/docs/deliveries/DELIVERY_*.md`（验收命令 + 产出物表） |
 | **跨 Agent 依赖** | 在对端目录写清要求（例：[`FIRMWARE_ALIGNMENT_007.md`](09-contract/schemas/energy/FIRMWARE_ALIGNMENT_007.md)） |

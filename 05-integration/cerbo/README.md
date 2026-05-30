@@ -17,9 +17,12 @@
 
 | 文件 | 说明 |
 |------|------|
-| `modbus-register-map.md` | 电池 /  solar / load / yield 寄存器与缩放 |
+| [`docs/G2_Cerbo_Modbus_Register_and_RUT_Client_Summary.md`](docs/G2_Cerbo_Modbus_Register_and_RUT_Client_Summary.md) | **寄存器 + RUT Client**（PDF V1.0 + Excel 3.73） |
+| [`docs/G2_Cerbo_Modbus_Connectivity.md`](docs/G2_Cerbo_Modbus_Connectivity.md) | Modbus 连接与台架网络 |
+| [`docs/G2_Cerbo_Energy_Field_Reference.md`](docs/G2_Cerbo_Energy_Field_Reference.md) | 物理量 → G2 Schema |
+| [`modbus-register-map.md`](modbus-register-map.md) | MVP 寄存器快查（ADR-012 D-9） |
+| [`docs/open_issues.md`](docs/open_issues.md) | D-6 / D-10 遗留问题 |
 | `venus-os-notes.md` | 设备 ID、网络、Modbus 端口（默认 502） |
-| `docs/` | 厂商资料摘要、现场接线注记 |
 
 ---
 

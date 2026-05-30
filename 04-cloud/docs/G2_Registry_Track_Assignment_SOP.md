@@ -21,7 +21,7 @@
 | # | 规则 |
 |---|------|
 | R1 | **设备上报** `firmware_version` 为权威（MQTT payload 顶层字段，与 Legacy 一致） |
-| R2 | **G2 Timestream 写入门槛**：`track=g2` **且** `firmware_version` **≥ v2.3.0**（见 §3） |
+| R2 | **G2 Timestream 写入门槛**：`track=g2` **且** `firmware_version` **≥ v2.3.0**（见 §3）；**IQTrailer/Cerbo 豁免**（R12 / ADR-012） |
 | R3 | **新生产** Registry 默认 **`track=g2`** |
 | R4 | **`IQ-26-00001`（HIL）** 固定 **`track=g2`** |
 | R5 | **Legacy 批量导入** 初始 **`track=legacy`** |
@@ -31,6 +31,7 @@
 | R9 | **量产 OTA 门禁**：不得对量产发布 **&lt; v2.3.0** 的 BIN（007/发布流程） |
 | R10 | 产线误刷 **&lt; v2.3.0** 可发货，云端 **`track=legacy`** 直至返工/OTA 达标后 **人工** 改为 `g2` |
 | R11 | **`batch_id` / `HQ2513*`** 不作为 `track` 依据（仅报表/追溯） |
+| R12 | **IQTrailer / Cerbo**（`system_type=iqtrailer` 或 `component_role=cerbo`）：**豁免** §3 G2 固件门槛；`track=g2` 即可写 Timestream（**ADR-012**） |
 
 ---
 
@@ -61,6 +62,7 @@
 | 场景 | `track` | Timestream 写入 |
 |------|---------|-----------------|
 | 新生产（正常） | `g2`（Provisioning 默认） | 仅当上报 ≥ v2.3.0 |
+| **IQTrailer / Cerbo** | `g2` | **`track=g2` 即可**（无 ESP32 fw 门槛 · ADR-012） |
 | HIL `IQ-26-00001` | `g2`（已种子） | 仅当上报 ≥ v2.3.0 |
 | Legacy 导入 ~70 台 | `legacy`（初始） | **不** 写 G2 表 |
 | 老机 OTA 至 ≥ v2.3.0 | **人工** PATCH → `g2` | 改 track 后且上报 ≥ v2.3.0 |

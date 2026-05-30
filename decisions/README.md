@@ -19,6 +19,7 @@
 | **ADR-008** | 2026-05-29 | **Registry `track` + firmware gate** — Timestream iff `track=g2` and fw ≥ v2.3.0; promotion **manual only** | [`04-cloud/docs/G2_Registry_Track_Assignment_SOP.md`](../04-cloud/docs/G2_Registry_Track_Assignment_SOP.md) |
 | **ADR-010** | 2026-05-30 | **Repo layout `03-frontend/`** — IQCloud UI/PWA; Customer≠User 分域; consumes Fleet API + contract | [`03-frontend/README.md`](../03-frontend/README.md) · Blueprint §6 |
 | **ADR-011** | 2026-05-30 | **Repo layout `05-integration/`** — IQTrailer Cerbo(Modbus)+RUT(MQTT); not 007 firmware; cloud M4/M5 | [`05-integration/README.md`](../05-integration/README.md) · System Model §3.4 |
+| **ADR-012** | 2026-05-30 | **IQTrailer Cerbo edge** — fw gate exempt; `role=cerbo`; Venus serial `component_id`; RUT Data to Server; D-6 open | This file §ADR-012 · [`05-integration/docs/open_issues.md`](../05-integration/docs/open_issues.md) |
 
 ---
 
@@ -56,7 +57,7 @@ Grandfathered IDs remain valid in Registry and Schema. New provisioning uses **A
 | Rule | Value |
 |------|--------|
 | G2 firmware floor | **`v2.3.0`**+ (`firmware_version` on device payload) |
-| Timestream write | `track=g2` **and** fw ≥ 2.3 |
+| Timestream write | `track=g2` **and** fw ≥ 2.3 (**IQTrailer/Cerbo exempt** · ADR-012) |
 | New production Registry | default **`track=g2`** |
 | Legacy import (~70) | initial **`track=legacy`** |
 | Upgrade to g2 | **`track` change manual only** (no ingest auto-promote) |
@@ -64,6 +65,27 @@ Grandfathered IDs remain valid in Registry and Schema. New provisioning uses **A
 | `batch_id` / `HQ2513*` | **not** used for `track` |
 
 Full SOP → [`04-cloud/docs/G2_Registry_Track_Assignment_SOP.md`](../04-cloud/docs/G2_Registry_Track_Assignment_SOP.md).
+
+**IQTrailer exception (ADR-012)**: `system_type=iqtrailer` or `component_role=cerbo` — Timestream write when `track=g2` **without** ESP32 `firmware_version ≥ v2.3.0` gate; `firmware_version` **optional** on wire.
+
+---
+
+## ADR-012 · IQTrailer Cerbo energy edge (approved · Bob 2026-05-30)
+
+| # | Decision | Value |
+|---|----------|--------|
+| D-1 | Firmware gate | **Exempt** IQTrailer/Cerbo from ADR-008 ESP32 floor |
+| D-2 | `component_role` | **`cerbo`** (canonical) |
+| D-3 | `component_id` | Cerbo **factory serial / Venus `uniqueId`** |
+| D-4 | RUT G2 JSON | **RutOS Data to Server** + custom JSON template |
+| D-5 | `data_stale` | **> 25 min** since last successful Modbus read |
+| D-6 | `state` / `reporting_mode` | **Open** — see [`05-integration/docs/open_issues.md`](../05-integration/docs/open_issues.md) |
+| D-7 | Registry MPPT | Cerbo **primary** + MPPT sub-items `role=mppt` (asset list only) |
+| D-8 | IoT Thing | **RUT** independent Thing (SN) · G2 Policy |
+| D-9 | Modbus MVP | 840–843, 850, **841**, **844** + yield (see D-10) |
+| D-10 | Yield source | **System unit 100 only** if bench proves equivalent registers |
+
+Detail: [`05-integration/cerbo/docs/G2_Cerbo_Modbus_Register_and_RUT_Client_Summary.md`](../05-integration/cerbo/docs/G2_Cerbo_Modbus_Register_and_RUT_Client_Summary.md) · M4 handler exemption in `ingest-energy/handler.py`.
 
 ---
 

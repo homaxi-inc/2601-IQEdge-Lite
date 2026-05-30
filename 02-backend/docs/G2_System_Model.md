@@ -105,19 +105,23 @@ IQTrailer (sys_id)
                     │
                     ├── Legacy: iot/rut241/status …
                     └── G2: iqedge/g2/{env}/energy/telemetry
-                           component_id = Cerbo · component_role = cerbo_gx
+                           component_id = Cerbo Venus serial · component_role = cerbo
 ```
 
 实现与文档：**[`05-integration/`](../../05-integration/)**（`cerbo/` · `rut/`）。
 
-**G2 影响**：
+**G2 影响**（ADR-012 · Bob 2026-05-30）：
 
 | 层 | 策略 |
 |----|------|
-| Registry | `components.energy` 主项为 Cerbo；MPPT 可为子组件引用或省略 |
-| MQTT Payload | `component_id` = Cerbo ID；多 MPPT 明细在 payload 嵌套或省略 |
-| API `GET .../energy` | 返回 Cerbo 汇聚后的系统级快照；**不做** 多 MPPT API 聚合逻辑（MVP） |
-| 007/边缘 | **IQWatch**: ESP32 VE.Direct（`01-firmware/`）。**IQTrailer**: Modbus TCP 读 Cerbo + RUT 发 MQTT（`05-integration/`） |
+| Registry | Cerbo `role=cerbo` 主项 + MPPT `role=mppt` 子项（资产清单）；`component_id` = Venus uniqueId |
+| MQTT Payload | `component_role=cerbo`；`firmware_version` **可选**（豁免 ADR-008 ESP32 门禁） |
+| IoT | **RUT** 独立 Thing（SN）持 G2 Policy 发布 energy |
+| EDGE-T2 | RutOS **Data to Server** + 自定义 JSON → G2 Topic |
+| API `GET .../energy` | Cerbo 汇聚快照；**不做** 多 MPPT 云端聚合（MVP） |
+| 007/边缘 | **IQWatch**: ESP32 VE.Direct。**IQTrailer**: Modbus + RUT（`05-integration/`） |
+
+待定：`state` / `reporting_mode` → [`05-integration/docs/open_issues.md`](../../05-integration/docs/open_issues.md) OI-001。
 
 > 将来若需 per-MPPT 明细，优先 **Cerbo 寄存器 / Venus OS 数据**，仍不必在云端拆 MPPT 聚合。
 

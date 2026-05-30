@@ -6,6 +6,16 @@
 
 ---
 
+## 2026-05-30 — ADR-012 IQTrailer Cerbo 边缘定稿
+
+**决策**: Bob D-1～D-10（D-6 遗留 OI-001）  
+**代码**: M4 `ingest-energy` — `iqtrailer`/`cerbo` 豁免 ADR-008 fw 门禁  
+**契约**: `telemetry-iqtrailer-cerbo-live.v1.json` · `examples/iqtrailer/registry-record.v1.json`  
+**SOP**: R12 · [`G2_Registry_Track_Assignment_SOP.md`](G2_Registry_Track_Assignment_SOP.md)  
+**下一步**: `cdk deploy iqedge-g2-dev-ingest` · EDGE-T2 Data to Server
+
+---
+
 ## 2026-05-30 — 仓库目录 `05-integration/`（Cerbo · RUT）
 
 **目录**: [`05-integration/README.md`](../../05-integration/README.md) · `cerbo/` · `rut/` · `iqtrailer/`  

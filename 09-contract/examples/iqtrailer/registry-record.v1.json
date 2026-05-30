@@ -1,0 +1,38 @@
+{
+  "sys_id": "IQ-26-06001",
+  "id_format": "iq_y1",
+  "system_type": "iqtrailer",
+  "track": "g2",
+  "deployment_state": "qa_bench",
+  "cloud_target": "dev",
+  "domains_enabled": ["energy", "network", "vision", "control"],
+  "components": {
+    "energy": [
+      {
+        "component_id": "c0619ab2e142",
+        "role": "cerbo",
+        "description": "Venus uniqueId / factory serial — energy SSOT (ADR-012 D-3)"
+      },
+      {
+        "component_id": "HQ214812345",
+        "role": "mppt",
+        "description": "Asset inventory only; not energy ingest primary (ADR-012 D-7)"
+      }
+    ],
+    "network": [
+      {
+        "component_id": "RUT241-6001234567",
+        "role": "router_4g",
+        "thing_name": "RUT241-6001234567"
+      }
+    ],
+    "vision": [],
+    "control": [],
+    "environment": []
+  },
+  "aliases": {
+    "mppt_serial": "HQ214812345"
+  },
+  "alias_mppt_serial": "HQ214812345",
+  "created_at": "2026-05-30T12:00:00Z"
+}

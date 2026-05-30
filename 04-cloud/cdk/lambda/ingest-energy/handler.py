@@ -1,6 +1,7 @@
 """
 G2 energy ingest — IoT Rule → Timestream + Shadow (M4).
-ADR-008: Timestream write only when Registry track=g2 and firmware_version >= 2.3.0.
+ADR-008: Timestream write when Registry track=g2 and firmware_version >= 2.3.0.
+ADR-012: IQTrailer (Cerbo / component_role=cerbo) exempt from firmware floor.
 Does not auto-promote track (manual only).
 """
 from __future__ import annotations
@@ -80,18 +81,33 @@ def _parse_time_ms(payload: dict[str, Any]) -> int:
     return int(dt.timestamp() * 1000)
 
 
+def _is_iqtrailer_energy(
+    payload: dict[str, Any], registry_item: dict[str, Any] | None = None
+) -> bool:
+    """ADR-012: Cerbo/RUT path exempt from ESP32 firmware floor."""
+    if payload.get("system_type") == "iqtrailer":
+        return True
+    if payload.get("component_role") == "cerbo":
+        return True
+    if registry_item and registry_item.get("system_type") == "iqtrailer":
+        return True
+    return False
+
+
 def _validate_envelope(payload: dict[str, Any]) -> str | None:
+    iqtrailer = _is_iqtrailer_energy(payload)
     required = (
         "schema_version",
         "sys_id",
         "component_id",
         "domain",
         "timestamp",
-        "firmware_version",
         "status",
         "data_stale",
         "reporting_mode",
     )
+    if not iqtrailer:
+        required = (*required, "firmware_version")
     for key in required:
         if key not in payload or payload[key] in (None, ""):
             return f"missing:{key}"
@@ -99,9 +115,10 @@ def _validate_envelope(payload: dict[str, Any]) -> str | None:
         return "bad:schema_version"
     if payload.get("domain") != "energy":
         return "bad:domain"
-    fw = str(payload.get("firmware_version", ""))
-    if not FW_PATTERN.match(fw):
-        return "bad:firmware_version_format"
+    fw_raw = payload.get("firmware_version")
+    if fw_raw not in (None, ""):
+        if not FW_PATTERN.match(str(fw_raw)):
+            return "bad:firmware_version_format"
     measures = payload.get("measures")
     if measures is None and "soc" not in payload:
         return "missing:measures_or_legacy_flat"
@@ -237,9 +254,8 @@ def lambda_handler(event: dict[str, Any], context: Any) -> dict[str, Any]:
 
     sys_id = str(payload["sys_id"])
     component_id = str(payload["component_id"])
-    firmware_version = str(payload["firmware_version"])
 
-    track, _ = _get_registry_track(sys_id)
+    track, registry_item = _get_registry_track(sys_id)
     if track is None:
         logger.warning("registry_miss sys_id=%s", sys_id)
         _metric("IngestValidationError")
@@ -250,12 +266,16 @@ def lambda_handler(event: dict[str, Any], context: Any) -> dict[str, Any]:
         _metric("IngestSkippedLegacyTrack")
         return {"ok": True, "skipped": "track_not_g2"}
 
-    if not meets_firmware_g2_floor(firmware_version):
-        logger.warning(
-            "reject_fw_floor sys_id=%s fw=%s", sys_id, firmware_version
-        )
-        _metric("IngestValidationError")
-        return {"ok": False, "reason": "firmware_below_2_3"}
+    iqtrailer = _is_iqtrailer_energy(payload, registry_item)
+    firmware_version = str(payload.get("firmware_version", ""))
+
+    if not iqtrailer:
+        if not firmware_version or not meets_firmware_g2_floor(firmware_version):
+            logger.warning(
+                "reject_fw_floor sys_id=%s fw=%s", sys_id, firmware_version
+            )
+            _metric("IngestValidationError")
+            return {"ok": False, "reason": "firmware_below_2_3"}
 
     time_ms = _parse_time_ms(payload)
     measure_values = _collect_measure_values(payload)
@@ -263,7 +283,8 @@ def lambda_handler(event: dict[str, Any], context: Any) -> dict[str, Any]:
     try:
         _write_timestream(sys_id, component_id, time_ms, measure_values)
         _update_shadow(sys_id, component_id, payload, time_ms)
-        _touch_registry_firmware(sys_id, firmware_version)
+        if firmware_version:
+            _touch_registry_firmware(sys_id, firmware_version)
     except ClientError:
         logger.exception("ingest_write_failed sys_id=%s", sys_id)
         _metric("TimestreamWriteError")
@@ -271,10 +292,11 @@ def lambda_handler(event: dict[str, Any], context: Any) -> dict[str, Any]:
 
     _metric("IngestSuccess")
     logger.info(
-        "ingest_ok sys_id=%s component_id=%s fw=%s measures=%d",
+        "ingest_ok sys_id=%s component_id=%s iqtrailer=%s fw=%s measures=%d",
         sys_id,
         component_id,
-        firmware_version,
+        iqtrailer,
+        firmware_version or "(exempt)",
         len(measure_values),
     )
     return {"ok": True, "sys_id": sys_id, "measures": len(measure_values)}
