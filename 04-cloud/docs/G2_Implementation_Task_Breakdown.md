@@ -150,7 +150,7 @@
 | M4.4 | Ingest：更新 Shadow 最新快照（DDB） | shadow 延迟可测 | ✅ |
 | M4.5 | 结构化日志（deviceId/sys_id, domain, latency_ms） | Log 样例 | ✅ |
 | M4.6 | CloudWatch 指标 `IngestSuccess` / `IngestValidationError` | 指标 | ✅ |
-| M4.7 | dev HIL：测试 Thing 发 1 条 telemetry → 可在 Timestream 查到 | 验收记录 | ⬜ 待 007 G2 MQTT |
+| M4.7 | dev HIL：测试 Thing 发 1 条 telemetry → 可在 Timestream 查到 | 验收记录 | ✅ IQ-26-00001 · v2.3.003 |
 
 ---
 

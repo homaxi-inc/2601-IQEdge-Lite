@@ -30,14 +30,16 @@
 
 ---
 
-## 3. 007 下一步（008 P0 已关闭）
+## 3. HIL 联调结果（2026-05-30 ✅ 关闭）
 
-| 顺序 | 模块 | 负责人 | 状态 |
-|------|------|--------|------|
-| 1 | G2 MQTT `iqedge/g2/dev/energy/telemetry` + `energy.telemetry.v1` | **007** | ⬜ |
-| 2 | OTA ≥ v2.3.0 + Legacy `verify_telemetry.py` | **007** | ⬜ |
-| 3 | **`verify_g2_telemetry.py`**（§5.3） | **007** | ⬜ |
-| 4 | M4.7 端到端 HIL 签收 | **007** 发包 + **008** 协助查日志 | ⬜ |
+| 顺序 | 模块 | 状态 | 证据 |
+|------|------|------|------|
+| 1 | G2 MQTT + `energy.telemetry.v1` | ✅ | 007 · v2.3.003 · 双发 Legacy + G2 |
+| 2 | OTA + Legacy `verify_telemetry.py` | ✅ | Job `IQW-OTA-HQ2513A69PJ-v23003-20260530` |
+| 3 | `verify_g2_telemetry.py` §5.3 | ✅ | ~60 s 间隔 · 10+ rows/30m |
+| 4 | M4.7 端到端 + Lambda 去重 | ✅ | 008 redeploy ingest · [`G2_DONE` 通知](../../01-firmware/report/NOTICE_007_to_008_IQ-26-00001_G2_DONE_2026-05-30.md) |
+
+**量产 OTA**：`pio run -e esp32prod`（NORMAL **300 s**）— 007 负责，008 无额外 dev 动作。
 
 ---
 

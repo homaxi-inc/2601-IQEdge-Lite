@@ -16,7 +16,7 @@
 | M4.4 | Shadow DDB 快照更新 | ✅ |
 | M4.5 | 结构化日志 | ✅ |
 | M4.6 | CloudWatch 指标 `IngestSuccess` / `IngestValidationError` | ✅ |
-| M4.7 | dev HIL 端到端（Thing MQTT → Timestream） | ⬜ 待 007 G2 Topic 发包 |
+| M4.7 | dev HIL 端到端（Thing MQTT → Timestream） | ✅ v2.3.003 · 2026-05-30 |
 
 ---
 
@@ -65,5 +65,5 @@ python tools\aws-verify\verify_g2_telemetry.py --sys-id IQ-26-00001 --minutes 30
 
 ## 5. 下游
 
-- **007** — G2 MQTT §5.2 → `verify_g2_telemetry.py` §5.3（见 [`NOTICE_008_to_007`](../../../01-firmware/report/NOTICE_008_to_007_IQ-26-00001_2026-05-30.md)）  
+- **M4** — ✅ dev HIL 关闭（007 v2.3.003 · [`G2_DONE`](../../../01-firmware/report/NOTICE_007_to_008_IQ-26-00001_G2_DONE_2026-05-30.md)）  
 - **M5** — network 域 ingest（复用 M4 模式）

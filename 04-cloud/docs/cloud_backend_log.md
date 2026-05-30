@@ -6,6 +6,15 @@
 
 ---
 
+## 2026-05-30 — M4.7 HIL 签收 · Lambda `days_running` 去重上线
+
+**007 完成**: [`NOTICE_007_to_008_IQ-26-00001_G2_DONE_2026-05-30.md`](../../01-firmware/report/NOTICE_007_to_008_IQ-26-00001_G2_DONE_2026-05-30.md) · 固件 **v2.3.003** · `verify_g2_telemetry.py` **PASS**（~60 s 间隔 · 6 rows/30m）  
+**008 动作**: `cdk deploy iqedge-g2-dev-ingest` — Lambda CodeSha256 更新（`days_running` flat 回填仅当 `measures.yield` 无值）  
+**M4.7**: ✅ dev HIL 端到端关闭  
+**生产提示**: 现场量产 OTA 用 `pio run -e esp32prod`（NORMAL **300 s**）
+
+---
+
 ## 2026-05-30 — M4 energy Ingest + HIL Policy attach · 007 可跑 §5.3
 
 **Stack**: `iqedge-g2-dev-ingest`  
