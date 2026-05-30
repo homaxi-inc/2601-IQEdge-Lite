@@ -22,6 +22,15 @@
 
 ---
 
+## 📅 [2026-05-30] - IQ-26-00001 OTA v2.3.0 + 008 通知
+
+- **OTA** — Job `IQW-OTA-HQ2513A69PJ-v230-20260530-125800` **SUCCEEDED**；`HQ2513A69PJ` → **v2.3.0**。
+- **Legacy** — `verify_telemetry.py` **3/3** @ 2026-05-30 19:59:04 UTC；`device/status` → AWS IoT 正常。
+- **G2** — `verify_g2_telemetry.py` 未过（待 008 M4 + 固件 G2 Topic）；见 `report/NOTICE_007_to_008_*.md`。
+- **Config.h** — `FIRMWARE_VERSION` = `v2.3.0`（G2 起线，ADR-008）。
+
+---
+
 ## 📅 [2026-05-29] - 报告目录 `report/`
 
 - 审计、遥测分析等一次性报告迁入 **`report/`**（见 `report/README.md` 索引）。

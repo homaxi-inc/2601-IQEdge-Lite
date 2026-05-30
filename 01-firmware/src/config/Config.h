@@ -5,7 +5,7 @@
 // ============================================================
 
 #define DEVICE_NAME     "IQEdge V2.3"
-#define FIRMWARE_VERSION "v2.2.3.25"
+#define FIRMWARE_VERSION "v2.3.0"
 
 // --- Build Flags ---
 #define DEBUG_MODE          true
