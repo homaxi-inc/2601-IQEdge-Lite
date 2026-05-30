@@ -6,7 +6,152 @@
 
 ---
 
-## 2026-05-29 — 租赁模式 + GPS 双形态 Roadmap 预留
+## 2026-05-29 — M3.4 `track` / 固件门禁定稿（Bob · ADR-008）
+
+**规则**: Timestream 仅 `track=g2` **且** `firmware_version` **≥ v2.3.0**；新生产默认 `track=g2`；Legacy 导入初始 `legacy`；**晋升 g2 仅人工**；`track=g2` 永不回退。  
+**HQ2513A69PJ 现网**: `v2.2.3.25`（尚不满足 G2 时序写入）。  
+**007**: [`FIRMWARE_ALIGNMENT_007.md`](../../09-contract/schemas/energy/FIRMWARE_ALIGNMENT_007.md) §2 · HIL §3.0  
+**SOP**: [`G2_Registry_Track_Assignment_SOP.md`](G2_Registry_Track_Assignment_SOP.md)
+
+---
+
+## 2026-05-29 — M3 Registry Stack（dev 已部署 + HIL 种子）
+
+**Stack**: `iqedge-g2-dev-registry`  
+**表**: `iqedge-g2-dev-table-registry` · GSI `gsi-alias-mppt` / `gsi-alias-legacy-device`  
+**种子**: `IQ-26-00001` · `track=g2` · `HQ2513A69PJ`  
+**契约**: `09-contract/schemas/registry/device-record.v1.json`  
+**交付**: [`deliveries/DELIVERY_M3.md`](deliveries/DELIVERY_M3.md)  
+**下一步**: M4 energy Ingest
+
+---
+
+## 2026-05-29 — M2 Storage Stack（dev 已部署）
+
+**Stack**: `iqedge-g2-dev-storage`  
+**产出**: Timestream `iqedge_g2_dev_database` + 5 域表 · DDB `iqedge-g2-dev-table-shadow` · `iqedge-g2-dev-table-control-logs` · S3 `iqedge-g2-dev-vision-assets`  
+**SSM**: `/iqedge/g2/dev/storage/*`  
+**交付**: [`deliveries/DELIVERY_M2.md`](deliveries/DELIVERY_M2.md)  
+**技术注记**: Timestream 复合分区键仅 `sys_id`；`component_id` 为写入 dimension（与 Cloud Design §5.1 文档「第二 dimension」在实现层等效）。
+
+**下一步**: M3 Registry + M4 energy Ingest（007 HIL Timestream 门禁）。
+
+---
+
+## 2026-05-29 — G2 HIL 联调启动（IQ-26-00001 / HQ2513A69PJ）
+
+**007 要求文档**: [`01-firmware/docs/G2_HIL_007_Firmware_Requirements.md`](../../01-firmware/docs/G2_HIL_007_Firmware_Requirements.md)  
+**008 分工**: [`G2_HIL_008_007_Handoff.md`](G2_HIL_008_007_Handoff.md) — M2+M3+M4 为 007 G2 Timestream 门禁前置  
+**sys_id**: `IQ-26-00001`（站点称呼 IQW-9041 仅历史别名）
+
+---
+
+**Stack**: `iqedge-g2-dev-foundation` · KMS · SSM · `iqedge-g2-dev-role-lambda-base` · `iqedge-g2-dev-iot-policy-g2-device`  
+**前置**: `cdk bootstrap aws://661631955220/us-east-1`  
+**交付**: [`deliveries/DELIVERY_M1.md`](deliveries/DELIVERY_M1.md)
+
+---
+
+Renamed from `重要决策/` → [`decisions/README.md`](../../decisions/README.md). All repo links updated.
+
+---
+
+**决策**: `IQ-{YY}-{NNNNN}`（例 `IQ-26-00001`）；中性 ID；`system_type` 部署 assign；Legacy `IQW-*` grandfather。  
+**索引**: [`decisions/README.md`](../../decisions/README.md) ADR-003–007  
+**宪法**: `G2_System_Model.md` §4 重写 · Schema/examples/007 对齐
+
+---
+
+## 2026-05-29 — sys_id 中性身份方案（讨论 → 已并入 ADR-004）
+
+Bob：**sys_id 不应绑定 IQW/IQB/IQT 产品线前缀**；`system_type` 在产测/部署 assign；改型可 re-assign。  
+**评审稿**: [`02-backend/docs/G2_sys_id_Design_Proposal.md`](../../02-backend/docs/G2_sys_id_Design_Proposal.md)  
+**动作**: 定稿前 **不** 全局改 Schema；M0.3 契约暂保留旧 pattern，批准后可快速批量替换。
+
+---
+
+**产出**: `09-contract/schemas/energy/telemetry.v1.json` + `common/g2-envelope.v1.json` + examples + `FIRMWARE_ALIGNMENT_007.md`  
+**验收**: `09-contract` → `npm run validate:energy` pass  
+**交付**: [`deliveries/DELIVERY_M0.3.md`](deliveries/DELIVERY_M0.3.md)
+
+---
+
+## 2026-05-29 — M0.1 + M0.2 工程基座（Bob 批准）
+
+**M0.1**: `04-cloud/cdk/` — TypeScript CDK v2，`bin/app.ts`，`-c env=dev|prod`，`G2ScaffoldStack`，`lib/naming.ts`  
+**M0.2**: `09-contract/` — 五域 + registry Schema 目录约定与 README  
+**验收**: `npm run synth:dev` / `synth:prod`（未 deploy）  
+**交付清单**: [`deliveries/DELIVERY_M0.1_M0.2.md`](deliveries/DELIVERY_M0.1_M0.2.md)
+
+---
+
+## 2026-05-29 — G2 云端与后端任务分解（执行蓝图）
+
+**产出**: [`G2_Implementation_Task_Breakdown.md`](G2_Implementation_Task_Breakdown.md) — 模块 M0–M18、子任务 ID、P0–P5 映射、MVP 关键路径
+
+---
+
+## 2026-05-29 — IQCloud 商业战略白皮书（00-strategy）
+
+**核心**: 产品身份（离网资产自治 OS + 变现引擎）· B2B2C 双受众 · 四大商业价值（Truck Roll / 流量 OPEX / 主动威慑 / Dealer SaaS 溢价）。
+
+**产出**: [`00-strategy/docs/IQCLOUD_COMMERCIAL_STRATEGY.md`](../../00-strategy/docs/IQCLOUD_COMMERCIAL_STRATEGY.md)（已脱敏，不含具体定价与运营商名）
+
+---
+
+## 2026-05-29 — Customer vs User 前端架构蓝图（方案待决）
+
+**核心**: Customer=商业租户(Tenant) · User=自然人+Role；前端 **双模块解耦**；Client≈Customer。
+
+**产出**: [`G2_Customer_User_Frontend_Blueprint.md`](G2_Customer_User_Frontend_Blueprint.md)
+
+---
+
+## 2026-05-29 — Client 租户层 SaaS 商业架构（方案待决）
+
+**核心**: Admin 造平台 · Dealer 管资产 · Client 用安防；隐私隔离 / RMR / 布撤防自助 / control 审计。
+
+**产出**: [`G2_Client_Tenant_Model.md`](G2_Client_Tenant_Model.md)
+
+---
+
+**议题**: ① 双 GPS 主备融合 ② High-Frequency Tracking FSM ③ HDOP 虚警过滤。
+
+**状态**: ⏸ 仅记录盲区；`location_primary_role` 逻辑未实现。
+
+**产出**: [`G2_GPS_Fusion_And_Tracking_Open_Issues.md`](G2_GPS_Fusion_And_Tracking_Open_Issues.md)
+
+---
+
+**问题**: 4G 中断 → 云端 Timestream 空洞 → 大屏假「平安」。
+
+**方案**: X1 本地 WAL（SD/HDD）→ 重连对齐 `last_acked_event_time` → 批量追溯写入；`ingest_mode=backfill` + 幂等。
+
+**产出**: [`G2_Smart_Backfill_Architecture.md`](G2_Smart_Backfill_Architecture.md)
+
+---
+
+**已定**: VQA 为 vision 核心上行；Camera 孪生字段 `focus_blur` / `video_blind` / `scene_change`；Topic `vision/telemetry`；**network Ping ≠ vision 健康**。
+
+**产出**: Domain Map · System Model §3.7 · API `.../vision/health` · Cloud Architecture Timestream
+
+---
+
+**已定**: 预置语音 → **control** (`play_audio`)；实时 Talk-down → **vision** WebRTC 信令；Camera→Speaker **X1 本地行为树**，禁止云端长链路实时联动。
+
+**产出**: [`G2_Domain_Map.md`](G2_Domain_Map.md) · [`G2_System_Model.md`](../../02-backend/docs/G2_System_Model.md) §3.6 · API 初稿
+
+---
+
+**问题**: SIM 需连网激活，未激活则无法连网 — 现场「变砖」风险。
+
+**候选**: ① Granite Test Ready 微流量 + First Ping Lambda（Zero-Touch）② OOB 扫码 + `POST .../activate`（Dealer Portal）。
+
+**状态**: ⏸ 待 Granite 能力确认后选型。
+
+**产出**: [`G2_SIM_Provisioning_Deadlock.md`](G2_SIM_Provisioning_Deadlock.md)
+
+---
 
 **预留**: IQWatch/IQTrailer `commercial.*` 租赁字段；GPS `gps_router` / `gps_asset_tracker`；`network/location` API。
 
@@ -22,13 +167,15 @@
 
 ---
 
-**决策**: dev/prod **共用** IQW/IQB/IQT 发号；不用 `IQW-DEV-*`。仓库零件 / 工厂待组装 / 现场部署等由 Registry **`deployment_state`** 表达；AWS 云环境 dev/prod 与 sys_id 正交（`cloud_target` 字段）。
+**决策**: dev/prod **共用** `IQ-YY-NNNNN` 发号（ADR-004）；Legacy `IQW/IQB/IQT` grandfather。`deployment_state` 表达生命周期。
+
+**（已废止 2026-05-29）** 原 IQW/IQB/IQT 分产品线前缀发号 — 见 `cloud_backend_log` 同日 ADR-004。
 
 **产出**: 更新 [`G2_System_Model.md`](../../02-backend/docs/G2_System_Model.md) §4.4 · §5
 
 ---
 
-**规则**: 方案 A — `IQW-9001+` · `IQB-1001+` · `IQT-6001+`；9999 用尽后向下借块（8001、7001…）。Bob 判断：占满时公司已需架构升级，不必现在过度设计。008 认同。
+**规则（已废止）**: 原方案 A — `IQW-9001+` / `IQB-1001+` / `IQT-6001+` — **由 ADR-004 取代**。
 
 **产出**: 更新 [`G2_System_Model.md`](../../02-backend/docs/G2_System_Model.md) §4
 

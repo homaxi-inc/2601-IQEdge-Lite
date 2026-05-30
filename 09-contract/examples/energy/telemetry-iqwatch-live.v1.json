@@ -1,0 +1,59 @@
+{
+  "schema_version": "energy.telemetry.v1",
+  "sys_id": "IQ-26-09041",
+  "component_id": "HQ2513NH99U",
+  "component_role": "mppt",
+  "domain": "energy",
+  "system_type": "iqwatch",
+  "timestamp": "2026-05-29T12:00:00Z",
+  "ingest_mode": "live",
+  "firmware_version": "v2.3.0",
+  "chipid": "88152F124B00",
+  "mac": "00:4B:12:2F:15:88",
+  "status": "running",
+  "state": "NORMAL",
+  "data_stale": false,
+  "reporting_mode": "NORMAL",
+  "is_reconciliation": false,
+  "measures": {
+    "battery": {
+      "voltage_v": 13.8,
+      "current_a": -0.05,
+      "soc_pct": 100,
+      "charge_state": "Float",
+      "charge_state_code": 5
+    },
+    "solar": {
+      "voltage_v": 21.76,
+      "current_a": 0.067,
+      "power_w": 13
+    },
+    "load": {
+      "voltage_v": 13.8,
+      "current_a": 0.9,
+      "power_w": 12.42,
+      "status": "ON"
+    },
+    "yield": {
+      "total_kwh": 6.25,
+      "today_kwh": 0.03,
+      "yesterday_kwh": 0.03,
+      "month_kwh": 0.09,
+      "max_power_w": 89,
+      "days_running": 218,
+      "avg_daily_kwh": 0.0286,
+      "today_vs_yesterday_pct": -10.0
+    }
+  },
+  "soc": 100,
+  "battery_voltage": 13.8,
+  "solar_power": 13.0,
+  "load_power": 12.42,
+  "total_yield_kwh": 6.25,
+  "today_yield_kwh": 0.03,
+  "days_running": 218,
+  "legacy": {
+    "deviceId": "HQ2513NH99U",
+    "device": "IQEdge"
+  }
+}

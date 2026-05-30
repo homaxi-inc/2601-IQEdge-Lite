@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iqedge.io/schemas/g2/registry/device-record/v1",
+  "title": "G2 System Registry Device Record v1",
+  "description": "DynamoDB item shape for iqedge-g2-{env}-table-registry. Fleet primary key is sys_id. See G2_System_Model.md §6.",
+  "type": "object",
+  "required": ["sys_id", "track", "components", "domains_enabled"],
+  "additionalProperties": true,
+  "properties": {
+    "sys_id": {
+      "type": "string",
+      "pattern": "^(IQ-[0-9]{2}-[0-9]{5}|IQ[WBT]-[0-9]{4,})$",
+      "description": "Fleet primary key (ADR-004 Y1 or grandfathered legacy prefix)"
+    },
+    "id_format": {
+      "type": "string",
+      "enum": ["iq_y1", "legacy_prefixed"]
+    },
+    "system_type": {
+      "type": "string",
+      "enum": ["iqwatch", "solar_iqbox", "ac_iqbox", "iqtrailer"]
+    },
+    "track": {
+      "type": "string",
+      "enum": ["g2", "legacy"],
+      "description": "API/data-plane routing: g2 → Timestream; legacy → Legacy DDB adapters"
+    },
+    "deployment_state": {
+      "type": "string",
+      "enum": [
+        "inventory_parts",
+        "at_factory",
+        "qa_bench",
+        "shipped",
+        "deployed",
+        "decommissioned"
+      ]
+    },
+    "cloud_target": {
+      "type": "string",
+      "enum": ["dev", "prod"]
+    },
+    "batch_id": {
+      "type": "string",
+      "maxLength": 64,
+      "description": "Traceability only; not used for track assignment (ADR-008)"
+    },
+    "firmware_version": {
+      "type": "string",
+      "maxLength": 32,
+      "description": "Last known device-reported version; optional until first telemetry"
+    },
+    "domains_enabled": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["energy", "network", "vision", "environment", "control"]
+      },
+      "uniqueItems": true,
+      "minItems": 1
+    },
+    "location_primary_role": {
+      "type": "string",
+      "enum": ["gps_router", "gps_asset_tracker"]
+    },
+    "components": {
+      "type": "object",
+      "required": ["energy", "network", "vision", "control", "environment"],
+      "additionalProperties": false,
+      "properties": {
+        "energy": { "$ref": "#/$defs/componentList" },
+        "network": { "$ref": "#/$defs/componentList" },
+        "vision": { "$ref": "#/$defs/componentList" },
+        "control": { "$ref": "#/$defs/componentList" },
+        "environment": { "$ref": "#/$defs/componentList" }
+      }
+    },
+    "aliases": {
+      "type": "object",
+      "additionalProperties": { "type": "string" },
+      "properties": {
+        "legacy_sys_id": { "type": "string" },
+        "mppt_serial": { "type": "string" },
+        "legacy_device_id": { "type": "string" }
+      }
+    },
+    "alias_mppt_serial": {
+      "type": "string",
+      "description": "Denormalized GSI key; must match aliases.mppt_serial when present"
+    },
+    "alias_legacy_device_id": {
+      "type": "string",
+      "description": "Denormalized GSI key; must match aliases.legacy_device_id when present"
+    },
+    "site": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "commercial": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "deployment_state": { "const": "deployed" } },
+        "required": ["deployment_state"]
+      },
+      "then": { "required": ["system_type"] }
+    },
+    {
+      "if": {
+        "properties": { "aliases": { "type": "object", "required": ["mppt_serial"] } },
+        "required": ["aliases"]
+      },
+      "then": { "required": ["alias_mppt_serial"] }
+    }
+  ],
+  "$defs": {
+    "componentList": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/component" }
+    },
+    "component": {
+      "type": "object",
+      "required": ["component_id", "role"],
+      "additionalProperties": true,
+      "properties": {
+        "component_id": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "role": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "thing_name": { "type": "string" },
+        "channel": { "type": "integer", "minimum": 1 },
+        "capabilities": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "vqa_enabled": { "type": "boolean" },
+        "vqa_interval_min": { "type": "integer", "minimum": 1 }
+      }
+    }
+  }
+}

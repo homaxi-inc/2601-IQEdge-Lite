@@ -71,3 +71,11 @@ Testing/
 # environment variables
 .env
 
+# G2 CDK (04-cloud/cdk)
+04-cloud/cdk/node_modules/
+04-cloud/cdk/cdk.out/
+04-cloud/cdk/dist/
+
+# G2 contract validation (09-contract)
+09-contract/node_modules/
+

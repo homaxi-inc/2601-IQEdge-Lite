@@ -160,11 +160,13 @@ sequenceDiagram
 
 重计算下沉到 **02-backend 读时聚合** 或 **Phase 2 批处理 Lambda**。
 
-### 4.2 Vision（event + S3）
+**Smart Backfill（断网补回）**: X1 本地 WAL → 重连批量写入；ingest 须用 **`event_time`** 作 Timestream 时间戳 + **`ingest_mode=backfill`** 幂等。详见 [`G2_Smart_Backfill_Architecture.md`](G2_Smart_Backfill_Architecture.md)。
+
+### 4.2 Vision（event + VQA + Backfill）
 
 | 数据类型 | 存储 | 原因 |
 |----------|------|------|
-| 事件元数据（人形检测、时间戳、cameraId） | Timestream `table_vision` + DDB shadow | 可查询、低成本 |
+| 事件元数据 + **VQA telemetry** | Timestream `table_vision` + DDB shadow | `vision/event` + `vision/telemetry`；见 Domain Map VQA 节 |
 | 图片 / 视频二进制 | S3 `iqedge-g2-{env}-vision-assets` | Timestream 不适合 blob |
 | 预签名 URL | 02-backend `/api/v2/vision/stream` 签发 | 前端不直连 S3 |
 
@@ -193,13 +195,15 @@ Device ACK / Job status
 
 ### 5.1 Timestream（五表一库）
 
-| Timestream 表 | 分区 dimension | 第二 dimension |
-|---------------|----------------|----------------|
+| Timestream 表 | 复合分区键（CDK） | 记录 dimension（写入时） |
+|---------------|-------------------|-------------------------|
 | `table_energy` | **`sys_id`** | `component_id`（MPPT SER# 等） |
 | `table_network` | **`sys_id`** | `component_id`（RUT SN 等） |
-| `table_vision` | **`sys_id`** | `camera_id` |
+| `table_vision` | **`sys_id`** | `component_id`（camera）；measures 含 `focus_blur`, `vqa_health`, `event_type` 等 |
 | `table_environment` | **`sys_id`** | `sensor_id` |
 | `table_control_logs` | **`sys_id`** | `command_id` |
+
+> **实现注记（M2）**: AWS Timestream 每表仅允许 **一个** composite partition key；第二列以上为 **record dimension**，非第二分区键。
 
 **写入模式**: Multi-measure records，一次 MQTT payload 一条 record，减少 Write 成本。
 
@@ -211,7 +215,7 @@ Device ACK / Job status
 |----|-----|------|
 | `SYS#{sys_id}` | `DOMAIN#energy#COMP#{component_id}` | 最新 MPPT / Cerbo 快照 |
 | `SYS#{sys_id}` | `DOMAIN#network#COMP#{component_id}` | 最新 RUT/GPS 快照 |
-| `SYS#{sys_id}` | `DOMAIN#vision#COMP#{component_id}` | 最近事件摘要 |
+| `SYS#{sys_id}` | `DOMAIN#vision#COMP#{component_id}` | 最近 AI 事件 + **最新 VQA 快照** |
 | `SYS#{sys_id}` | `DOMAIN#environment#COMP#{component_id}` | 最近传感器读数 |
 | `SYS#{sys_id}` | `DOMAIN#control` | 最近指令状态 |
 
@@ -328,7 +332,7 @@ deny publish: iqedge/g2/dev/*   (prod 设备禁止写 dev Topic)
 | **P4** | **vision** + S3 预签名 | 从 IQCamera 迁移策略（新设备走 G2） |
 | **P5** | **environment** + 多账号 / DR | Modbus 传感器接入 |
 
-**MVP 定义**: P0 + P1 + Registry 合流 + dev 全链路 HIL 验证（`HQ2513*` 新批次标识为 `track=g2`）。
+**MVP 定义**: P0 + P1 + Registry 合流 + dev 全链路 HIL 验证（**`track=g2` + 固件 ≥ `v2.3.0`** 写 Timestream；见 ADR-008）。
 
 ---
 
@@ -346,7 +350,7 @@ deny publish: iqedge/g2/dev/*   (prod 设备禁止写 dev Topic)
 
 ## 12. 待决策项（Bob）
 
-- [ ] Registry：`track=g2` 判定规则（批次号 vs 固件版本 vs 手动标记）
+- [x] Registry：`track=g2` 判定 — **固件 ≥ v2.3.0** + **晋升仅人工** → [`G2_Registry_Track_Assignment_SOP.md`](G2_Registry_Track_Assignment_SOP.md)
 - [ ] 02-backend 部署形态：Lambda vs App Runner vs ECS
 - [ ] Shadow 单表 vs 分表（本文推荐单表 + PK/SK）
 - [ ] prod 是否同账号（本文 MVP 推荐同账号双 Stack）

@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iqedge.io/schemas/g2/common/g2-envelope/v1",
+  "title": "G2 Telemetry Envelope",
+  "description": "Shared envelope for G2 MQTT telemetry (all domains). See G2_System_Model.md §8.",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "description": "Contract id: {domain}.telemetry.v{major}",
+      "pattern": "^[a-z]+\\.telemetry\\.v[0-9]+$"
+    },
+    "sys_id": {
+      "type": "string",
+      "description": "IQ System identity (Fleet primary key). ADR-004: IQ-YY-NNNNN; legacy IQW/IQB/IQT grandfathered.",
+      "pattern": "^(IQ-[0-9]{2}-[0-9]{5}|IQ[WBT]-[0-9]{4,})$",
+      "examples": ["IQ-26-00001", "IQ-26-09041", "IQW-9041"]
+    },
+    "component_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "description": "Energy gateway or MPPT serial / Cerbo id within the system"
+    },
+    "component_role": {
+      "type": "string",
+      "enum": [
+        "mppt",
+        "cerbo",
+        "shunt",
+        "battery_protect",
+        "inverter",
+        "gateway",
+        "unknown"
+      ],
+      "description": "Registry components.energy[].role alignment"
+    },
+    "domain": {
+      "type": "string",
+      "enum": ["energy", "network", "vision", "environment"]
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Edge-generated report time (ISO 8601 UTC). Default Timestream time for ingest_mode=live"
+    },
+    "ingest_mode": {
+      "type": "string",
+      "enum": ["live", "backfill"],
+      "default": "live",
+      "description": "live=real-time; backfill=Smart Backfill WAL replay (see G2_Smart_Backfill_Architecture.md)"
+    },
+    "event_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Business event time; required when ingest_mode=backfill (Timestream record time)"
+    },
+    "backfill_batch_id": {
+      "type": "string",
+      "maxLength": 64,
+      "description": "Backfill job id for idempotency and ops tracing"
+    },
+    "sequence": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Monotonic sequence within backfill_batch_id"
+    },
+    "firmware_version": {
+      "type": "string",
+      "maxLength": 64,
+      "description": "IQEdge firmware build id"
+    },
+    "chipid": {
+      "type": "string",
+      "maxLength": 32,
+      "description": "ESP32 chip id (legacy diagnostic)"
+    },
+    "mac": {
+      "type": "string",
+      "maxLength": 32,
+      "description": "Primary MAC (legacy diagnostic)"
+    }
+  },
+  "required": [
+    "schema_version",
+    "sys_id",
+    "component_id",
+    "component_role",
+    "domain",
+    "timestamp"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": { "ingest_mode": { "const": "backfill" } },
+        "required": ["ingest_mode"]
+      },
+      "then": {
+        "required": ["event_time"]
+      }
+    }
+  ],
+  "additionalProperties": true
+}

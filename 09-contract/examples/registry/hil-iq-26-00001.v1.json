@@ -1,0 +1,30 @@
+{
+  "sys_id": "IQ-26-00001",
+  "id_format": "iq_y1",
+  "system_type": "iqwatch",
+  "track": "g2",
+  "deployment_state": "qa_bench",
+  "cloud_target": "dev",
+  "domains_enabled": ["energy", "network", "control"],
+  "components": {
+    "energy": [
+      {
+        "component_id": "HQ2513A69PJ",
+        "role": "mppt",
+        "thing_name": "IQEdge_1C:69:20:B8:D7:F4"
+      }
+    ],
+    "network": [],
+    "vision": [],
+    "control": [],
+    "environment": []
+  },
+  "aliases": {
+    "legacy_sys_id": "IQW-9041",
+    "mppt_serial": "HQ2513A69PJ",
+    "legacy_device_id": "HQ2513A69PJ"
+  },
+  "alias_mppt_serial": "HQ2513A69PJ",
+  "alias_legacy_device_id": "HQ2513A69PJ",
+  "created_at": "2026-05-29T12:00:00Z"
+}

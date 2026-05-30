@@ -96,3 +96,16 @@ Firmware **v2.2.3.22+** emits **flat fields** required by `SaveDeviceStatus` (`d
   }
 }
 ```
+
+---
+
+## Payload G2（新轨 · energy.telemetry.v1）
+
+Legacy 上表仍适用于 `device/status`。
+
+G2 新批次使用 Topic `iqedge/g2/{env}/energy/telemetry`，契约见：
+
+- **sys_id**: `IQ-{YY}-{NNNNN}`（ADR-004，例 `IQ-26-00001`）
+- [`09-contract/schemas/energy/telemetry.v1.json`](../../09-contract/schemas/energy/telemetry.v1.json)
+- [`09-contract/schemas/energy/FIRMWARE_ALIGNMENT_007.md`](../../09-contract/schemas/energy/FIRMWARE_ALIGNMENT_007.md)
+- [`decisions/README.md`](../../decisions/README.md)

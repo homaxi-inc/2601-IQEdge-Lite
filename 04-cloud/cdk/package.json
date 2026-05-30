@@ -1,0 +1,27 @@
+{
+  "name": "iqedge-g2-cdk",
+  "version": "0.1.0",
+  "private": true,
+  "description": "IQEdge G2 AWS CDK — Agent 008 · 04-cloud/cdk",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "cdk": "cdk",
+    "synth:dev": "cdk synth -c env=dev",
+    "synth:prod": "cdk synth -c env=prod",
+    "diff:dev": "cdk diff -c env=dev",
+    "deploy:dev": "cdk deploy -c env=dev --all",
+    "deploy:prod": "cdk deploy -c env=prod --all"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "aws-cdk": "^2.175.0",
+    "ts-node": "^10.9.2",
+    "typescript": "~5.7.2"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "^2.175.0",
+    "constructs": "^10.4.2",
+    "source-map-support": "^0.5.21"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "schema_version": "energy.telemetry.v1",
+  "sys_id": "IQ-26-06001",
+  "component_id": "CERBO-7F2A",
+  "component_role": "cerbo",
+  "domain": "energy",
+  "system_type": "iqtrailer",
+  "timestamp": "2026-05-29T12:05:00Z",
+  "ingest_mode": "live",
+  "status": "running",
+  "state": "NORMAL",
+  "data_stale": false,
+  "reporting_mode": "NORMAL",
+  "measures": {
+    "battery": {
+      "voltage_v": 26.4,
+      "soc_pct": 78,
+      "charge_state": "Bulk"
+    },
+    "solar": {
+      "power_w": 420
+    },
+    "load": {
+      "power_w": 180,
+      "status": "ON"
+    },
+    "yield": {
+      "total_kwh": 120.5,
+      "today_kwh": 4.2,
+      "days_running": 45
+    }
+  }
+}

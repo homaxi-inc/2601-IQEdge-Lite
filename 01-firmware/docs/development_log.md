@@ -6,6 +6,14 @@
 
 ---
 
+## 📅 [2026-05-29] - G2 固件起线 v2.3.0（008 → 007 · Bob 定稿）
+
+- **ADR-008** — `track=g2` + 固件 **≥ v2.3.0** 才写 G2 Timestream；**晋升 g2 仅人工**；`track=g2` 永不回退。
+- **台架 HQ2513A69PJ** — 现网 **v2.2.3.25**；下一版 OTA 目标 **≥ v2.3.0** + G2 Topic + `firmware_version` 字段。
+- **必读** — [`G2_HIL_007_Firmware_Requirements.md`](G2_HIL_007_Firmware_Requirements.md) §3.0 · [`09-contract/schemas/energy/FIRMWARE_ALIGNMENT_007.md`](../../09-contract/schemas/energy/FIRMWARE_ALIGNMENT_007.md) §2 · [`04-cloud/docs/G2_Registry_Track_Assignment_SOP.md`](../../04-cloud/docs/G2_Registry_Track_Assignment_SOP.md)
+
+---
+
 ## 📅 [2026-05-29] - 技能 4：历史遥测分析
 
 - **`.cursor/skills/iqedge-telemetry-analysis/`** — 时间窗拉取（Timestream/DDB/API）、IQW↔SER# 映射、异常规则、**report/** 报告模板；与技能 2 分工（快照 vs 趋势）。

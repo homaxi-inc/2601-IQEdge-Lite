@@ -36,12 +36,18 @@ python tools\aws-verify\verify_telemetry.py
 
 | 脚本 | 用途 |
 |------|------|
+| `verify_g2_telemetry.py --sys-id IQ-26-00001` | **G2** Timestream（需 008 M2+M4） |
 | `analyze_device_window.py --device <SER#> --hours 10` | 时间窗统计 + 异常提示 |
 | `find_device.py <片段>` | 按 SER# 片段扫描 DDB |
 
 报告输出规范：`.cursor/skills/iqedge-telemetry-analysis/SKILL.md` → 写入 `report/`。
 
-## 红线（SOP）
+## G2 HIL 联调（IQ-26-00001 / HQ2513A69PJ）
+
+**007 必读**: [`docs/G2_HIL_007_Firmware_Requirements.md`](docs/G2_HIL_007_Firmware_Requirements.md)  
+**008 分工**: [`04-cloud/docs/G2_HIL_008_007_Handoff.md`](../04-cloud/docs/G2_HIL_008_007_Handoff.md)
+
+---
 
 - 禁止 Scan 生产表；`find_device.py` 仅小范围 `contains` 扫描，优先已知 SER#
 - 禁止将密钥写入固件或 Git

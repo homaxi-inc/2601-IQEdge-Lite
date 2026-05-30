@@ -2,7 +2,7 @@
 
 > **性质**: Bob 定稿思路，008 启动工作的首要参考  
 > **状态**: 活文档 — 后续逐步补充  
-> **关联**: [`G2_Cloud_Deployment_Audit_2026-05-29.md`](G2_Cloud_Deployment_Audit_2026-05-29.md) · [`G2_Domain_Map.md`](G2_Domain_Map.md) · [`G2_Cloud_Architecture_Design.md`](G2_Cloud_Architecture_Design.md)
+> **关联**: [`G2_Cloud_Deployment_Audit_2026-05-29.md`](G2_Cloud_Deployment_Audit_2026-05-29.md) · [`G2_Domain_Map.md`](G2_Domain_Map.md) · [`G2_Cloud_Architecture_Design.md`](G2_Cloud_Architecture_Design.md) · [`G2_SIM_Provisioning_Deadlock.md`](G2_SIM_Provisioning_Deadlock.md)
 
 ---
 
@@ -110,10 +110,10 @@ iqedge/g2/{env}/{domain}/{telemetry|event|command}   # MQTT Topic（五域分层
 
 ## 待 Bob 后续补充
 
-- [x] ~~sys_id 发号规则~~ → 见 [`G2_System_Model.md`](../../02-backend/docs/G2_System_Model.md) §4
+- [x] ~~sys_id 发号规则~~ → **ADR-004** `IQ-{YY}-{NNNNN}` — [`decisions/README.md`](../../decisions/README.md)
 - [ ] G2 新轨首批上线批次与时间线
 - [ ] dev / prod 账号或 Stack 隔离细则
-- [ ] Lambda / API Gateway 命名细则
+- [ ] Provisioning 扫码 SOP → 根因见 [`G2_SIM_Provisioning_Deadlock.md`](G2_SIM_Provisioning_Deadlock.md)（SIM 激活死锁 · **方案待决**）
 
 ---
 

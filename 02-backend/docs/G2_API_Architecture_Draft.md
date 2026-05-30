@@ -97,7 +97,15 @@ Fleet
 
 **system_type 枚举**: `iqwatch` · `solar_iqbox` · `ac_iqbox` · `iqtrailer`
 
-### 4.3 Energy 域
+### 4.2.1 Provisioning · SIM 激活（方案待决 ⏸）
+
+> 详见 [`G2_SIM_Provisioning_Deadlock.md`](../../04-cloud/docs/G2_SIM_Provisioning_Deadlock.md)
+
+| Method | Path | 说明 |
+|--------|------|------|
+| POST | `/api/v2/fleet/systems/{sys_id}/activate` | **待定** — 解法二 OOB：Granite 激活 SIM → 等待 IoT 心跳 → Stripe |
+
+---
 
 | Method | Path | 说明 |
 |--------|------|------|
@@ -123,8 +131,14 @@ Fleet
 
 | Method | Path | 说明 |
 |--------|------|------|
-| GET | `/api/v2/fleet/systems/{sys_id}/vision/events` | 事件列表（分页） |
-| GET | `/api/v2/fleet/systems/{sys_id}/vision/stream/{event_id}` | 预签名 S3 URL |
+| GET | `/api/v2/fleet/systems/{sys_id}/vision/events` | AI / 告警事件（含边缘自治联动摘要） |
+| GET | `/api/v2/fleet/systems/{sys_id}/vision/stream/{event_id}` | 预签名 S3 URL / 录像回放 |
+| GET | `/api/v2/fleet/systems/{sys_id}/vision/health` | **VQA 最新快照**（focus_blur / video_blind / scene_change） |
+| GET | `/api/v2/fleet/systems/{sys_id}/vision/health/history` | VQA 时序历史 |
+| GET | `/api/v2/fleet/vision/health-summary` | **车队级** 视觉健康率（healthy / degraded / failed） |
+| POST | `/api/v2/fleet/systems/{sys_id}/vision/webrtc/offer` | Talk-down — WebRTC SDP Offer → Answer |
+
+**运维要点**: `network` 在线且 `vision/health=failed` → 优先 **远程诊断**，避免盲目 Truck Roll。
 
 ### 4.6 Environment 域
 
@@ -133,15 +147,37 @@ Fleet
 | GET | `/api/v2/fleet/systems/{sys_id}/environment` | 最新传感器读数 |
 | GET | `/api/v2/fleet/systems/{sys_id}/environment/history` | 时序历史 |
 
-### 4.7 Control 域（Tesla `vehicle_cmds` 对标）
+### 4.7 Control 域
 
 | Method | Path | 说明 |
 |--------|------|------|
-| POST | **`/api/v2/fleet/systems/{sys_id}/commands/{command}`** | 执行命令（见 §4.8） |
-| GET | `/api/v2/fleet/systems/{sys_id}/commands/{command_id}` | 命令状态 / 审计 |
+| POST | **`/api/v2/fleet/systems/{sys_id}/control/command`** | 异步控制命令（MQTT / Shadow 下行） |
+| GET | `/api/v2/fleet/systems/{sys_id}/control/command/{command_id}` | 命令状态 / 审计 |
 
-**command 示例**: `relay_on`, `relay_off`, `flash_led`, `request_telemetry`  
-**非 command**: OTA 固件升级 → **IoT Jobs** 专用端点（Phase 3），不混入通用 command。
+**command `action` 示例**:
+
+| action | 对象 | 说明 |
+|--------|------|------|
+| `play_audio` | IP Speaker | `track_id`, `volume` — 预置语录（见 Domain Map） |
+| `relay_on` / `relay_off` | Relay | — |
+| `strobe_on` / `strobe_off` | Strobe Light | — |
+| `flash_led` | IQEdge | — |
+| `request_telemetry` | 系统 | 紧急拉取 |
+
+**示例 body**:
+
+```json
+{
+  "action": "play_audio",
+  "component_id": "SPEAKER-01",
+  "track_id": "warning_01",
+  "volume": 90
+}
+```
+
+**下行**: `iqedge/g2/{env}/control/command` → X1 → 局域网 ONVIF/HTTP → Speaker。
+
+**非本端点**: OTA → **IoT Jobs**；实时 Talk-down → **`.../vision/webrtc/offer`**。
 
 ### 4.8 Legacy 兼容（v1 · deprecated）
 
@@ -202,7 +238,7 @@ Request: GET /api/v2/fleet/systems/{sys_id}/energy
 ### 6.1 MVP（dev / 内部工具）
 
 ```http
-GET /api/v2/fleet/systems/IQW-9041/energy
+GET /api/v2/fleet/systems/IQ-26-09041/energy
 x-api-key: <IQWATCH_API_KEY>
 Content-Type: application/json
 ```
@@ -225,6 +261,23 @@ Content-Type: application/json
 | `environment:read` | environment GET |
 | `control:write` | POST commands |
 | `offline_access` | refresh token（Tesla 同名惯例） |
+
+### 6.3 多租户预留（Admin · Dealer · Client · 方案待决 ⏸）
+
+> 详见 [`G2_Client_Tenant_Model.md`](../../04-cloud/docs/G2_Client_Tenant_Model.md)
+
+| 角色 | API 数据范围 |
+|------|--------------|
+| **admin** | 全平台 |
+| **dealer** | 名下全部 `sys_id` |
+| **client** | **仅分配** 的 `sys_id`；安防视图为主 |
+
+**Scope 草案（待决）**: `dealer:read` · `client:read` · `client:control:disarm`  
+**control_logs** 须记录 `actor_type` + `actor_id`（Dealer vs Client 审计铁证）。
+
+MVP 不实现 RBAC；Auth 中间件 **须预留** `dealer_id` / `client_id`（/`customer_id`）/ `user_id` Claims。
+
+> **Customer vs User 前端双模块** → [`G2_Customer_User_Frontend_Blueprint.md`](../../04-cloud/docs/G2_Customer_User_Frontend_Blueprint.md)
 
 ---
 
@@ -257,7 +310,7 @@ Content-Type: application/json
 ```json
 {
   "error": "system_not_found",
-  "error_description": "sys_id IQW-9999 not in registry",
+  "error_description": "sys_id IQ-26-99999 not in registry",
   "request_id": "abc-123"
 }
 ```
@@ -275,7 +328,7 @@ Content-Type: application/json
 
 ```json
 {
-  "sys_id": "IQW-9041",
+  "sys_id": "IQ-26-09041",
   "system_type": "iqwatch",
   "domain": "energy",
   "meta": {
@@ -321,7 +374,7 @@ Schema 权威来源 → `09-contract/schemas/energy/`（与 ingest Lambda 共用
       v2_network.py
       v2_vision.py
       v2_environment.py
-      v2_control.py
+      v2_control.py                     # .../control/command
       v1_legacy.py                      # deprecated shim
     adapters/
       registry.py                       # track routing
@@ -374,8 +427,8 @@ Schema 权威来源 → `09-contract/schemas/energy/`（与 ingest Lambda 共用
 ✅ P0  Registry 双轨 adapter（sys_id + aliases → legacy mppt）
 ✅ P0  v1 shim: /v1/devices/{mppt_serial}/status
 ⬜ P1  network / environment
-⬜ P2  vision events + presigned URL
-⬜ P3  POST commands + audit
+⬜ P2  vision events + VQA health + presigned URL
+⬜ P3  POST control/command + vision/webrtc/offer + 审计
 ```
 
 ---
@@ -384,7 +437,7 @@ Schema 权威来源 → `09-contract/schemas/energy/`（与 ingest Lambda 共用
 
 - [ ] 公开 Base URL 域名（dev/prod）
 - [ ] MVP 鉴权：仅 API Key vs 同步上 Cognito
-- [x] ~~sys_id 发号~~ → IQW 9001+ / IQB 1001+ / IQT 6001+，溢出借 8001、7001…（见 System Model §4）
+- [x] ~~sys_id 发号~~ → **ADR-004** `IQ-{YY}-{NNNNN}` — 见 [`decisions/README.md`](../../decisions/README.md) · System Model §4
 - [ ] v1 Sunset 目标日期
 - [ ] Command 白名单首批（relay / OTA 边界）
 - [ ] IQTrailer 多 MPPT 的 **API 明细展开**（若 Cerbo payload 不足时再议；MVP 不做云端聚合）
@@ -401,6 +454,8 @@ Schema 权威来源 → `09-contract/schemas/energy/`（与 ingest Lambda 共用
 | 五域 Topic/表 | `04-cloud/docs/G2_Domain_Map.md` |
 | 双轨战略 | `04-cloud/docs/008_Strategic_Guide.md` |
 | OpenAPI 契约（待建） | `09-contract/openapi/v2.yaml` |
+| SIM 激活死锁（待决） | `04-cloud/docs/G2_SIM_Provisioning_Deadlock.md` |
+| Client 租户 Admin/Dealer/Client（待决） | `04-cloud/docs/G2_Client_Tenant_Model.md` |
 
 ---
 
