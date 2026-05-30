@@ -21,21 +21,23 @@
 | 项 | 状态 |
 |----|------|
 | M0 契约 + M1 Foundation（IoT Policy、KMS、Lambda base role） | ✅ |
+| M2 Storage + M3 Registry（HIL 种子 `IQ-26-00001`） | ✅ |
+| **M4** energy ingest（Rule + Lambda + Schema · dev 已部署） | ✅ |
+| Thing 证书 + **G2 Policy attach**（`IQEdge_1C:69:20:B8:D7:F4`） | ✅ 2026-05-30 |
 | AWS 账户 CLI | ✅ `661631955220` |
 | 007 要求文档 | ✅ `G2_HIL_007_Firmware_Requirements.md` |
+| **007 通知** | ✅ [`NOTICE_008_to_007_IQ-26-00001_2026-05-30.md`](../../01-firmware/report/NOTICE_008_to_007_IQ-26-00001_2026-05-30.md) |
 
 ---
 
-## 3. 008 下一步（007 门禁 G2 前必须完成）
+## 3. 007 下一步（008 P0 已关闭）
 
-| 顺序 | 模块 | 产出 |
-|------|------|------|
-| 1 | **M3 种子** | Registry 项 `IQ-26-00001` · `track=g2` · `aliases.mppt_serial=HQ2513A69PJ` | ✅ |
-| 2 | **M2** | `iqedge_g2_dev_database` + `iqedge_g2_dev_table_energy` + Shadow DDB | ✅ |
-| 3 | **M4** | Rule `iqedge-g2-dev-rule-energy` + ingest Lambda + Schema 校验 |
-| 4 | **运维** | Thing 证书 attach `iqedge-g2-dev-iot-policy-g2-device` |
-| 5 | **工具** | `01-firmware/tools/aws-verify/verify_g2_telemetry.py` |
-| 6 | **通知** | `development_log` + 口头/会话告知 007「可跑 §5.3」 |
+| 顺序 | 模块 | 负责人 | 状态 |
+|------|------|--------|------|
+| 1 | G2 MQTT `iqedge/g2/dev/energy/telemetry` + `energy.telemetry.v1` | **007** | ⬜ |
+| 2 | OTA ≥ v2.3.0 + Legacy `verify_telemetry.py` | **007** | ⬜ |
+| 3 | **`verify_g2_telemetry.py`**（§5.3） | **007** | ⬜ |
+| 4 | M4.7 端到端 HIL 签收 | **007** 发包 + **008** 协助查日志 | ⬜ |
 
 ---
 

@@ -17,3 +17,7 @@ export function ssmStoragePath(g2Env: G2Env, ...parts: string[]): string {
 export function ssmRegistryPath(g2Env: G2Env, ...parts: string[]): string {
   return [ROOT, g2Env, 'registry', ...parts].join('/');
 }
+
+export function ssmIngestPath(g2Env: G2Env, ...parts: string[]): string {
+  return [ROOT, g2Env, 'ingest', ...parts].join('/');
+}

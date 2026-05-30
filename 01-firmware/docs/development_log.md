@@ -6,6 +6,14 @@
 
 ---
 
+## 📅 [2026-05-30] - 008 P0 完成 · 可进入 §5.2 / §5.3
+
+- **008 通知** — M4 dev 已部署 + G2 Policy attach；见 [`report/NOTICE_008_to_007_IQ-26-00001_2026-05-30.md`](../report/NOTICE_008_to_007_IQ-26-00001_2026-05-30.md)。
+- **007 下一步** — 固件 G2 Topic（§5.2）→ OTA → `verify_g2_telemetry.py`（§5.3）。
+- **Legacy** — 仍正常；G2 路径待本迭代固件实现。
+
+---
+
 ## 📅 [2026-05-29] - G2 固件起线 v2.3.0（008 → 007 · Bob 定稿）
 
 - **ADR-008** — `track=g2` + 固件 **≥ v2.3.0** 才写 G2 Timestream；**晋升 g2 仅人工**；`track=g2` 永不回退。
@@ -26,7 +34,7 @@
 
 - **OTA** — Job `IQW-OTA-HQ2513A69PJ-v230-20260530-125800` **SUCCEEDED**；`HQ2513A69PJ` → **v2.3.0**。
 - **Legacy** — `verify_telemetry.py` **3/3** @ 2026-05-30 19:59:04 UTC；`device/status` → AWS IoT 正常。
-- **G2** — `verify_g2_telemetry.py` 未过（待 008 M4 + 固件 G2 Topic）；见 `report/NOTICE_007_to_008_*.md`。
+- **G2** — 008 P0 已完成（见 `NOTICE_008_to_007_*.md`）；待固件 G2 Topic + `verify_g2_telemetry.py`。
 - **Config.h** — `FIRMWARE_VERSION` = `v2.3.0`（G2 起线，ADR-008）。
 
 ---

@@ -301,8 +301,8 @@ python tools\aws-verify\verify_g2_telemetry.py --sys-id IQ-26-00001 --minutes 30
 
 - [x] 已核对 AWS dev 账户与 M1 资源  
 - [x] 已确认联调身份 **`IQ-26-00001`** / **`HQ2513A69PJ`** / Thing 名称  
-- [ ] **M2+M3+M4 dev deploy** — 007 进入 §5.3 前完成（008 下一步工作）  
-- [ ] Thing **G2 Policy attach** — 与 Bob/007 联调时完成  
+- [x] **M2+M3+M4 dev deploy** — 2026-05-30 完成（见 [`NOTICE_008_to_007`](../report/NOTICE_008_to_007_IQ-26-00001_2026-05-30.md)）  
+- [x] Thing **G2 Policy attach** — cert `…eb590933…` · 2026-05-30  
 
 ---
 

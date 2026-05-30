@@ -3,6 +3,7 @@ import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
 import { getAwsDeploymentEnv, getG2Env } from '../lib/config';
 import { G2FoundationStack } from '../lib/stacks/g2-foundation-stack';
+import { G2IngestStack } from '../lib/stacks/g2-ingest-stack';
 import { G2RegistryStack } from '../lib/stacks/g2-registry-stack';
 import { G2StorageStack } from '../lib/stacks/g2-storage-stack';
 
@@ -29,5 +30,12 @@ const registry = new G2RegistryStack(app, `iqedge-g2-${g2Env}-registry`, {
   description: `IQEdge G2 Registry (${g2Env}) — M3 Fleet sys_id table`,
 });
 registry.addDependency(storage);
+
+const ingest = new G2IngestStack(app, `iqedge-g2-${g2Env}-ingest`, {
+  g2Env,
+  env: awsEnv,
+  description: `IQEdge G2 Ingest (${g2Env}) — M4 energy Rule/Lambda`,
+});
+ingest.addDependency(registry);
 
 app.synth();

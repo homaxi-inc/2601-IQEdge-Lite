@@ -39,16 +39,16 @@ cdk/
   package.json
 ```
 
-## 当前阶段 (M1–M3 ✅ · dev 已部署)
+## 当前阶段 (M1–M4 ✅ · dev 已部署)
 
 - ✅ `G2FoundationStack` — KMS、SSM、Lambda base role、IoT policy
 - ✅ `G2StorageStack` — Timestream（5 表）、Shadow DDB、Control logs DDB、S3 vision
 - ✅ `G2RegistryStack` — Fleet Registry + alias GSI；HIL 种子 `IQ-26-00001`
-- ⬜ M4 energy Ingest
+- ✅ `G2IngestStack` — energy Rule + ingest Lambda（M4）
 
 ```powershell
-npx cdk deploy iqedge-g2-dev-registry -c env=dev   # 依赖 storage
-python ../scripts/seed_registry_item.py --env dev --file ../../09-contract/examples/registry/hil-iq-26-00001.v1.json
+npx cdk deploy iqedge-g2-dev-ingest -c env=dev   # 依赖 registry
+python ../scripts/attach_g2_iot_policy.py --thing IQEdge_1C:69:20:B8:D7:F4 --env dev
 ```
 
 ## 禁止事项

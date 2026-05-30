@@ -65,4 +65,4 @@ aws dynamodb query --table-name iqedge-g2-dev-table-registry `
 
 ## 5. 下游
 
-**M4** — energy IoT Rule + Ingest（Registry 查 `track` + Schema 校验）→ 007 §5.3 Timestream 门禁。
+**M4** — ✅ energy IoT Rule + Ingest（dev）→ 007 §5.3；见 [`DELIVERY_M4.md`](deliveries/DELIVERY_M4.md)。

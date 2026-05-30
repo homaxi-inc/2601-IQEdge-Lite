@@ -6,6 +6,18 @@
 
 ---
 
+## 2026-05-30 — M4 energy Ingest + HIL Policy attach · 007 可跑 §5.3
+
+**Stack**: `iqedge-g2-dev-ingest`  
+**Rule**: `iqedge_g2_dev_rule_energy` · Topic `iqedge/g2/dev/energy/telemetry`  
+**Lambda**: `iqedge-g2-dev-fn-ingest-energy`（Schema 校验 · Timestream + Shadow · ADR-008 `track=g2` + fw ≥ v2.3.0）  
+**运维**: Thing `IQEdge_1C:69:20:B8:D7:F4` ← cert `…eb590933…` · Policies `AllowAllPolicy` + `iqedge-g2-dev-iot-policy-g2-device`  
+**交付**: [`deliveries/DELIVERY_M4.md`](deliveries/DELIVERY_M4.md)  
+**007 通知**: [`01-firmware/report/NOTICE_008_to_007_IQ-26-00001_2026-05-30.md`](../../01-firmware/report/NOTICE_008_to_007_IQ-26-00001_2026-05-30.md) — **P0 关闭，可进入 §5.2 / §5.3**  
+**待 007**: G2 Topic 发包 → `verify_g2_telemetry.py`（M4.7 端到端）
+
+---
+
 ## 2026-05-29 — M3.4 `track` / 固件门禁定稿（Bob · ADR-008）
 
 **规则**: Timestream 仅 `track=g2` **且** `firmware_version` **≥ v2.3.0**；新生产默认 `track=g2`；Legacy 导入初始 `legacy`；**晋升 g2 仅人工**；`track=g2` 永不回退。  
