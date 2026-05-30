@@ -6,6 +6,21 @@
 
 ---
 
+## 2026-05-30 — 仓库目录 `05-integration/`（Cerbo · RUT）
+
+**目录**: [`05-integration/README.md`](../../05-integration/README.md) · `cerbo/` · `rut/` · `iqtrailer/`  
+**ADR**: ADR-011 · System Model §3.4 数据流修正（RUT 发 MQTT）  
+**下一步**: EDGE-T1 Modbus 寄存器图 · EDGE-T2 RUT→G2 JSON
+
+---
+
+## 2026-05-30 — 仓库目录 `03-frontend/` 纳入索引
+
+**目录**: [`03-frontend/README.md`](../../03-frontend/README.md) · Customer/User/Fleet UI 脚手架  
+**ADR**: ADR-010 · 更新根 `README.md` · `AGENTS.md` · Blueprint §6
+
+---
+
 ## 2026-05-30 — Bob 控制台验收签收 · G2 HIL 关闭
 
 **验收**: [`verification/G2-HIL-IQ-26-00001-2026-05-30/SIGNOFF-2026-05-30.md`](verification/G2-HIL-IQ-26-00001-2026-05-30/SIGNOFF-2026-05-30.md) — Rule / Policy / Timestream / DDB / CFN / OTA **全部 OK**  

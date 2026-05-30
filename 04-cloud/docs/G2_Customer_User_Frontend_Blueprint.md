@@ -192,10 +192,10 @@ JWT claims (草案):
 
 ---
 
-## 6. 前端工程原则（03-frontend 待建）
+## 6. 前端工程原则（[`03-frontend/`](../../03-frontend/)）
 
 ```text
-03-frontend/
+03-frontend/                    ← 仓库目录已创建 · 2026-05-30
   modules/
     customer/     ← Roster, Allocation, White-label, Billing
     user/         ← Auth, Team, RBAC guards, Profile
@@ -215,7 +215,7 @@ JWT claims (草案):
 - [ ] MFA 强制策略：Dealer Admin vs Customer Viewer 是否分级
 - [ ] Impersonation（Admin 代登录 Dealer）合规流程
 - [ ] 一 User 隶属多 Customer 是否允许（兼职保安场景）
-- [ ] 03-frontend 技术栈（React vs Vue vs PWA-only）
+- [ ] 03-frontend 技术栈（React vs Vue vs PWA-only）— 目录已建，见 [`03-frontend/README.md`](../../03-frontend/README.md)
 
 ---
 

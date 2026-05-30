@@ -98,13 +98,17 @@ API / Registry 的 energy **主读组件**（`energy_primary_component`）因产
 
 ```text
 IQTrailer (sys_id)
-  MPPT ×N ──► Cerbo GX (Modbus 汇聚 / Gateway)
+  MPPT ×N ──► Cerbo GX (Modbus TCP Server / Gateway)
+                    ▲
+                    │ Modbus TCP 轮询（RUT 或集成主机）
+              RUT241/956 ──► MQTT → AWS IoT
                     │
-                    ├── Modbus TCP 读数（当前做法）
-                    └──► MQTT iqedge/g2/.../energy/telemetry
-                           component_id = Cerbo
-                           component_role = cerbo_gx
+                    ├── Legacy: iot/rut241/status …
+                    └── G2: iqedge/g2/{env}/energy/telemetry
+                           component_id = Cerbo · component_role = cerbo_gx
 ```
+
+实现与文档：**[`05-integration/`](../../05-integration/)**（`cerbo/` · `rut/`）。
 
 **G2 影响**：
 
@@ -113,7 +117,7 @@ IQTrailer (sys_id)
 | Registry | `components.energy` 主项为 Cerbo；MPPT 可为子组件引用或省略 |
 | MQTT Payload | `component_id` = Cerbo ID；多 MPPT 明细在 payload 嵌套或省略 |
 | API `GET .../energy` | 返回 Cerbo 汇聚后的系统级快照；**不做** 多 MPPT API 聚合逻辑（MVP） |
-| 007/边缘 | 维持 Modbus TCP 读 Cerbo；与 Watch 的 VE.Direct 路径 **分轨实现** |
+| 007/边缘 | **IQWatch**: ESP32 VE.Direct（`01-firmware/`）。**IQTrailer**: Modbus TCP 读 Cerbo + RUT 发 MQTT（`05-integration/`） |
 
 > 将来若需 per-MPPT 明细，优先 **Cerbo 寄存器 / Venus OS 数据**，仍不必在云端拆 MPPT 聚合。
 

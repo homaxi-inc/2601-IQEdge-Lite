@@ -17,6 +17,8 @@
 | **ADR-006** | 2026-05-29 | **`deployed` requires `system_type`**; `unassigned` allowed pre-deploy | System Model §5 |
 | **ADR-007** | 2026-05-29 | **Cross-class re-profile** — `system_type` PATCH needs Admin + audit + component checks | System Model §5 |
 | **ADR-008** | 2026-05-29 | **Registry `track` + firmware gate** — Timestream iff `track=g2` and fw ≥ v2.3.0; promotion **manual only** | [`04-cloud/docs/G2_Registry_Track_Assignment_SOP.md`](../04-cloud/docs/G2_Registry_Track_Assignment_SOP.md) |
+| **ADR-010** | 2026-05-30 | **Repo layout `03-frontend/`** — IQCloud UI/PWA; Customer≠User 分域; consumes Fleet API + contract | [`03-frontend/README.md`](../03-frontend/README.md) · Blueprint §6 |
+| **ADR-011** | 2026-05-30 | **Repo layout `05-integration/`** — IQTrailer Cerbo(Modbus)+RUT(MQTT); not 007 firmware; cloud M4/M5 | [`05-integration/README.md`](../05-integration/README.md) · System Model §3.4 |
 
 ---
 

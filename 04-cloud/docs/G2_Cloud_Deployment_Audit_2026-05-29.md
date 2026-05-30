@@ -331,7 +331,7 @@ Legacy 兼容（过渡期）:
 
 ### Phase 5 — 前端 + CI/CD（并行）
 
-- `03-frontend/` PWA（复用 S3 `iqedge-pwa-mobile-test-*`）
+- `03-frontend/` PWA（[`README`](../../03-frontend/README.md) · 复用 S3 `iqedge-pwa-mobile-test-*`）
 - GitHub Actions：`cdk deploy --context env=dev` → 测试 → prod
 - API Key / IAM 按 dev/prod 分离
 
