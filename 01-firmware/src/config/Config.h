@@ -4,8 +4,14 @@
 // IQEdge V2.0 — Global Configuration
 // ============================================================
 
-#define DEVICE_NAME     "IQEdge V2.3"
-#define FIRMWARE_VERSION "v2.3.0"
+#define DEVICE_NAME     "IQEdge_G2"
+#define FIRMWARE_VERSION "v2.3.003"
+
+// G2 HIL (IQ-26-00001) — see docs/G2_HIL_007_Firmware_Requirements.md §3
+#ifndef G2_SYS_ID
+#define G2_SYS_ID "IQ-26-00001"
+#endif
+constexpr const char* G2_MQTT_TOPIC_ENERGY = "iqedge/g2/dev/energy/telemetry";
 
 // --- Build Flags ---
 #define DEBUG_MODE          true
@@ -32,10 +38,17 @@ constexpr const char* MQTT_TOPIC_STATUS = "device/status";
 constexpr const char* MQTT_TOPIC_CMD    = "device/command";
 // IQWatch REST API (1y9689tax0) is host/tools only — see tools/aws-verify, not used by firmware.
 
-// --- Timing ---
-constexpr unsigned long PUBLISH_INTERVAL_NORMAL_MS = 300000;   // 5 min (Default)
-constexpr unsigned long PUBLISH_INTERVAL_NIGHT_MS  = 1800000;  // 30 min (Production)
-constexpr unsigned long PUBLISH_INTERVAL_PEAK_MS   = 60000;    // 1 min (Peak > 100W)
+// --- Timing (NORMAL) ---
+// HIL/dev (default build): 60 s. Production (-DG2_PRODUCTION_BUILD): 300 s.
+#if defined(G2_PRODUCTION_BUILD)
+constexpr unsigned long PUBLISH_INTERVAL_NORMAL_MS = 300000;   // 5 min
+constexpr unsigned long PUBLISH_INTERVAL_NIGHT_MS  = 1800000;  // 30 min
+constexpr unsigned long PUBLISH_INTERVAL_PEAK_MS   = 60000;    // 1 min (peak solar)
+#else
+constexpr unsigned long PUBLISH_INTERVAL_NORMAL_MS = 60000;    // 1 min (HIL / 联调)
+constexpr unsigned long PUBLISH_INTERVAL_NIGHT_MS  = 60000;
+constexpr unsigned long PUBLISH_INTERVAL_PEAK_MS   = 60000;
+#endif
 constexpr unsigned long VEDIRECT_TIMEOUT_MS        = 60000;    // 1 min
 constexpr unsigned long MPPT_CHECK_INTERVAL_MS     = 5000;
 constexpr unsigned long HEARTBEAT_INTERVAL_MS      = 60000;

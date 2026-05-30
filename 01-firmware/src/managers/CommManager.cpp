@@ -26,7 +26,7 @@ void CommManager::begin(StorageManager& storage) {
     _mqtt.setClient(_tls);
     _mqtt.setServer(AWS_MQTT_ENDPOINT, AWS_MQTT_PORT);
     _mqtt.setCallback(_onMessage);
-    _mqtt.setBufferSize(2048);
+    _mqtt.setBufferSize(3072);
     Serial.println("[COM] initialized (V2.2 OTA Job Listening)");
 }
 
@@ -118,6 +118,13 @@ static void _formatCloudTimestamp(char* buf, size_t len) {
     strftime(buf, len, "%Y-%m-%d %H:%M:%S UTC", &ti);
 }
 
+static void _formatIso8601Utc(char* buf, size_t len) {
+    time_t now = time(nullptr);
+    struct tm ti;
+    gmtime_r(&now, &ti);
+    strftime(buf, len, "%Y-%m-%dT%H:%M:%SZ", &ti);
+}
+
 static void _formatChipId(uint64_t chipId, char* buf, size_t len) {
     snprintf(buf, len, "%012llX", (unsigned long long)chipId);
 }
@@ -149,12 +156,24 @@ bool CommManager::publishStatus() {
     esp_task_wdt_reset();
     
     if (ok) {
-        Serial.println("[COM] Publish OK");
+        Serial.println("[COM] Legacy publish OK");
     } else {
-        Serial.printf("[COM] Publish FAILED, MQTT state=%d\n", _mqtt.state());
+        Serial.printf("[COM] Legacy publish FAILED, MQTT state=%d\n", _mqtt.state());
     }
-    
-    return ok;
+
+    char g2buf[2048];
+    _buildG2Payload(g2buf, sizeof(g2buf));
+    Serial.printf("[COM] G2 publish (%d bytes) topic: %s\n", strlen(g2buf), G2_MQTT_TOPIC_ENERGY);
+    esp_task_wdt_reset();
+    bool g2ok = _mqtt.publish(G2_MQTT_TOPIC_ENERGY, g2buf);
+    esp_task_wdt_reset();
+    if (g2ok) {
+        Serial.println("[COM] G2 publish OK");
+    } else {
+        Serial.printf("[COM] G2 publish FAILED, MQTT state=%d\n", _mqtt.state());
+    }
+
+    return ok && g2ok;
 }
 
 bool CommManager::_ensureWifi() {
@@ -380,6 +399,79 @@ void CommManager::_buildPayload(char* buf, size_t bufLen) {
     sys["serial"]   = diag.mppt_serial;
     sys["firmware"] = diag.mppt_firmware;
     sys["pid"]      = diag.pid;
+
+    serializeJson(doc, buf, bufLen);
+}
+
+void CommManager::_buildG2Payload(char* buf, size_t bufLen) {
+    auto& ctx  = SystemContext::instance();
+    auto  snap = ctx.getEnergySnapshot();
+    auto  diag = ctx.getSystemDiag();
+    auto  hist = ctx.getHistoricalData();
+
+    const float totalKwh = round((hist.total_yield_wh / 1000.0) * 100) / 100.0;
+    const float todayKwh = round((hist.today_yield_wh / 1000.0) * 100) / 100.0;
+
+    StaticJsonDocument<2048> doc;
+    doc["schema_version"]    = "energy.telemetry.v1";
+    doc["sys_id"]            = G2_SYS_ID;
+    doc["component_id"]      = diag.mppt_serial;
+    doc["component_role"]    = "mppt";
+    doc["domain"]            = "energy";
+    doc["ingest_mode"]       = "live";
+    doc["firmware_version"]  = FIRMWARE_VERSION;
+    doc["mac"]               = ctx.mac;
+    doc["is_reconciliation"] = false;
+    doc["status"]            = "running";
+    doc["data_stale"]        = false;
+    doc["state"]             = ctx.stateToString(ctx.getState());
+    doc["reporting_mode"]    = ctx.reportingModeToString(ctx.getReportingMode());
+
+    char chipBuf[17];
+    _formatChipId(ctx.chipId, chipBuf, sizeof(chipBuf));
+    doc["chipid"] = chipBuf;
+
+    char tsIso[32];
+    _formatIso8601Utc(tsIso, sizeof(tsIso));
+    doc["timestamp"] = tsIso;
+
+    JsonObject measures = doc.createNestedObject("measures");
+
+    JsonObject bat = measures.createNestedObject("battery");
+    bat["voltage_v"]           = snap.battery_voltage;
+    bat["current_a"]           = snap.battery_current;
+    bat["soc_pct"]             = snap.battery_soc;
+    bat["charge_state"]        = snap.charge_state;
+    bat["charge_state_code"]   = snap.charge_state_code;
+
+    JsonObject sol = measures.createNestedObject("solar");
+    sol["voltage_v"] = snap.solar_voltage;
+    sol["current_a"] = snap.solar_current;
+    sol["power_w"]   = snap.solar_power;
+
+    JsonObject load = measures.createNestedObject("load");
+    load["voltage_v"] = snap.battery_voltage;
+    load["current_a"] = snap.load_current;
+    load["power_w"]   = snap.load_power;
+    load["status"]    = snap.load_status;
+
+    JsonObject yld = measures.createNestedObject("yield");
+    yld["total_kwh"]    = totalKwh;
+    yld["today_kwh"]    = todayKwh;
+    yld["days_running"] = hist.day_sequence;
+    yld["max_power_w"]  = hist.max_power_w;
+
+    doc["soc"]             = snap.battery_soc;
+    doc["battery_voltage"] = snap.battery_voltage;
+    doc["solar_power"]     = snap.solar_power;
+    doc["load_power"]      = snap.load_power;
+    doc["total_yield_kwh"] = totalKwh;
+    doc["today_yield_kwh"] = todayKwh;
+    // days_running only in measures.yield — flat duplicate breaks M4 MULTI ingest
+
+    JsonObject leg = doc.createNestedObject("legacy");
+    leg["deviceId"] = diag.mppt_serial;
+    leg["device"]   = DEVICE_NAME;
 
     serializeJson(doc, buf, bufLen);
 }

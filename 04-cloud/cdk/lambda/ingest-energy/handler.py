@@ -141,7 +141,8 @@ def _collect_measure_values(payload: dict[str, Any]) -> list[dict[str, str]]:
     add("load_power", payload.get("load_power"))
     add("total_yield_kwh", payload.get("total_yield_kwh"))
     add("today_yield_kwh", payload.get("today_yield_kwh"))
-    add("days_running", payload.get("days_running"), "BIGINT")
+    if not yld.get("days_running"):
+        add("days_running", payload.get("days_running"), "BIGINT")
 
     return out
 

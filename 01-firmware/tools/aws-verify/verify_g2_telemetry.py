@@ -32,8 +32,11 @@ def main() -> int:
     args = p.parse_args()
 
     client = boto3.client("timestream-query", region_name=args.region)
+    # M4 ingest uses MeasureValueType=MULTI (g2_energy); scalar measure_value::double N/A.
     query = f"""
-        SELECT sys_id, component_id, time, measure_name, measure_value::double AS v
+        SELECT sys_id, component_id, time, measure_name,
+               battery_soc_pct, battery_voltage_v, solar_power_w, load_power_w,
+               yield_total_kwh, yield_today_kwh
         FROM "{args.database}"."{args.table}"
         WHERE sys_id = '{args.sys_id.replace("'", "''")}'
           AND time > ago({args.minutes}m)

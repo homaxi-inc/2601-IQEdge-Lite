@@ -6,6 +6,16 @@
 
 ---
 
+## 📅 [2026-05-30] - G2 HIL 完成 v2.3.003 · 通知 008
+
+- **固件** — G2 Topic `iqedge/g2/dev/energy/telemetry` + `energy.telemetry.v1`；`DEVICE_NAME=IQEdge_G2`；版本 **`v2.3.003`**（三位 patch）。
+- **上报** — 联调 `esp32dev` **60 s**；生产 `pio run -e esp32prod` **300 s** NORMAL。
+- **OTA** — `IQW-OTA-HQ2513A69PJ-v23003-20260530` SUCCEEDED。
+- **验收** — Legacy **3/3**；`verify_g2_telemetry.py` **PASS**（~60 s 间隔多条）。
+- **008** — [`report/NOTICE_007_to_008_IQ-26-00001_G2_DONE_2026-05-30.md`](../report/NOTICE_007_to_008_IQ-26-00001_G2_DONE_2026-05-30.md)。
+
+---
+
 ## 📅 [2026-05-30] - 008 P0 完成 · 可进入 §5.2 / §5.3
 
 - **008 通知** — M4 dev 已部署 + G2 Policy attach；见 [`report/NOTICE_008_to_007_IQ-26-00001_2026-05-30.md`](../report/NOTICE_008_to_007_IQ-26-00001_2026-05-30.md)。

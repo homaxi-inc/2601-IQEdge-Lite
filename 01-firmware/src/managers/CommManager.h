@@ -48,6 +48,7 @@ private:
     bool _ensureMqtt();
     void _syncTime();
     void _buildPayload(char* buf, size_t bufLen);
+    void _buildG2Payload(char* buf, size_t bufLen);
     unsigned long _nextBackoff(unsigned long current, unsigned long base, unsigned long max);
 
     // V2.2 OTA & MQTT Callback
