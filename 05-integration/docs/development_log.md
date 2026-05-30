@@ -4,6 +4,22 @@
 
 ---
 
+## 2026-05-30 — VRM API 预检 PASS（007 可开工 Cerbo 集成）
+
+- T1–T6 全过 · 站点 **964243 ST-03** · Gateway **`c0619ab6be37`**
+- 报告：[`deliveries/VRM_CERBO_PREFLIGHT_007_HANDOFF.md`](deliveries/VRM_CERBO_PREFLIGHT_007_HANDOFF.md)
+- 脚本：[`scripts/vrm_cerbo_preflight.py`](../scripts/vrm_cerbo_preflight.py)
+
+---
+
+## 2026-05-30 — VRM API 凭据同步（003_IQTrailer → 本地 .env）
+
+- Bob 提供研究仓 token · 已写入 **`05-integration/.env`**（gitignored）  
+- 说明：[`docs/vrm-api-local-credentials.md`](vrm-api-local-credentials.md) · 模板 `.env.example`  
+- **用途**：Modbus 台架交叉校验 · **非** G2 生产 ingest
+
+---
+
 ## 2026-05-30 — Agent 分工：007 主责 `05-integration/`
 
 - Bob 授权：007 主责 Cerbo · Modbus · RUT/RutOS · 台架；可读写本目录全树  

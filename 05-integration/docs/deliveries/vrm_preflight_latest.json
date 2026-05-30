@@ -1,0 +1,171 @@
+{
+  "fetchedAtUtc": "2026-05-30T22:49:45.243029+00:00",
+  "idSite": "964243",
+  "tests": {
+    "T1_users_me": {
+      "pass": true,
+      "userId": 608184,
+      "email": "bobw@homaxi.com"
+    },
+    "T2_installations": {
+      "pass": true,
+      "count": 7,
+      "siteIds": [
+        937276,
+        937296,
+        937305,
+        937326,
+        788900,
+        964243,
+        910067
+      ]
+    },
+    "T3_system_overview": {
+      "pass": true,
+      "gatewayIdentifier": "c0619ab6be37",
+      "loggingIntervalSec": 900,
+      "devices": [
+        {
+          "instance": null,
+          "productName": "Gateway",
+          "serial": "c0619ab6be37",
+          "role": "cerbo"
+        },
+        {
+          "instance": 278,
+          "productName": "SmartShunt 500A",
+          "serial": "HQ2245QEEW2",
+          "role": "shunt"
+        },
+        {
+          "instance": 277,
+          "productName": "SmartSolar Charger MPPT 150/45 rev3",
+          "serial": "HQ2441HWTFQ",
+          "role": "mppt"
+        }
+      ]
+    },
+    "T4_battery_realtime": {
+      "pass": true,
+      "instance": 278,
+      "metrics": {
+        "V": {
+          "valueFloat": 27.54,
+          "formattedValue": "27.54 V",
+          "valueEnum": null,
+          "nameEnum": null,
+          "secondsAgo": 501
+        },
+        "I": {
+          "valueFloat": -0.6,
+          "formattedValue": "-0.60 A",
+          "valueEnum": null,
+          "nameEnum": null,
+          "secondsAgo": 501
+        },
+        "SOC": {
+          "valueFloat": 66,
+          "formattedValue": "66.0 %",
+          "valueEnum": null,
+          "nameEnum": null,
+          "secondsAgo": 501
+        }
+      }
+    },
+    "T5_solar_realtime": {
+      "pass": true,
+      "instance": 277,
+      "metrics": {
+        "ScW": {
+          "valueFloat": 33.036,
+          "formattedValue": "33 W",
+          "valueEnum": null,
+          "nameEnum": null,
+          "secondsAgo": 501
+        },
+        "ScV": {
+          "valueFloat": 27.53,
+          "formattedValue": "27.5 V",
+          "valueEnum": null,
+          "nameEnum": null,
+          "secondsAgo": 501
+        },
+        "ScS": {
+          "valueFloat": null,
+          "formattedValue": "Float",
+          "valueEnum": 5,
+          "nameEnum": "Float",
+          "secondsAgo": 501
+        },
+        "YT": {
+          "valueFloat": 0.4,
+          "formattedValue": "0.40 kWh",
+          "valueEnum": null,
+          "nameEnum": null,
+          "secondsAgo": 501
+        },
+        "YY": {
+          "valueFloat": 0.44,
+          "formattedValue": "0.44 kWh",
+          "valueEnum": null,
+          "nameEnum": null,
+          "secondsAgo": 501
+        }
+      }
+    },
+    "T6_stats_live_feed": {
+      "pass": true,
+      "latest": {
+        "bv": {
+          "last": [
+            1780180489000,
+            27.54,
+            27.54,
+            27.54
+          ]
+        },
+        "bs": {
+          "last": [
+            1780180489000,
+            66,
+            66,
+            66
+          ]
+        },
+        "Pdc": {
+          "last": [
+            1780180489000,
+            33.060000398159
+          ]
+        },
+        "total_solar_yield": {
+          "last": [
+            1780179589000,
+            0.010000228881835938
+          ]
+        }
+      },
+      "warning": "total_solar_yield is normalized internal scale — use YT/YY widgets for kWh"
+    }
+  },
+  "g2BenchReference": {
+    "sys_id": "IQ-26-06001",
+    "component_id_cerbo": "c0619ab6be37",
+    "component_role": "cerbo",
+    "registry_mppt_serial": "HQ2441HWTFQ",
+    "measures_expected_at_modbus": {
+      "battery.voltage_v": 27.54,
+      "battery.current_a": -0.6,
+      "battery.soc_pct": 66.0,
+      "solar.power_w": 33.0,
+      "load.power_w": 49.6,
+      "yield.today_kwh": 0.4,
+      "yield.yesterday_kwh": 0.44
+    },
+    "modbus_mvp_registers_unit_100": "840-844, 850 — see cerbo/modbus-register-map.md",
+    "data_stale_threshold_min": 25,
+    "vrm_seconds_ago": 501,
+    "vrm_logging_interval_sec": 900
+  },
+  "pass": true
+}

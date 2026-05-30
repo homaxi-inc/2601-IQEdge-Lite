@@ -34,11 +34,19 @@ MPPT ×N ──► Cerbo GX (Venus OS · Modbus TCP Server)
 | [`cerbo/`](cerbo/) | Victron Cerbo · Modbus 寄存器 · Venus OS 读数 |
 | [`rut/`](rut/) | RUT MQTT 发布 · Topic 映射 · 脚本/配置 |
 | [`iqtrailer/`](iqtrailer/) | Trailer 场景总览 · 验收清单 |
-| [`docs/`](docs/) | 集成开发日志 |
+| [`docs/vrm-api-local-credentials.md`](docs/vrm-api-local-credentials.md) | VRM API 本地凭据说明（`.env` gitignored） |
+| [`docs/`](docs/) | 集成开发日志 · open issues |
 
 ---
 
-## Agent 分工
+## 007 本地起步
+
+1. 复制凭据：`cp 05-integration/.env.example 05-integration/.env`（或从 `003_IQTrailer/.env` 同步 · **勿提交**）  
+2. VRM 预检：`python 05-integration/scripts/vrm_cerbo_preflight.py`  
+3. 交接报告：[`docs/deliveries/VRM_CERBO_PREFLIGHT_007_HANDOFF.md`](docs/deliveries/VRM_CERBO_PREFLIGHT_007_HANDOFF.md)  
+4. Modbus 寄存器：[`cerbo/modbus-register-map.md`](cerbo/modbus-register-map.md) · EDGE-T2：[`rut/README.md`](rut/README.md)
+
+---
 
 | 角色 | 范围 |
 |------|------|
