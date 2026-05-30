@@ -71,6 +71,10 @@ Testing/
 # environment variables
 .env
 
+# local secrets (VPN keys, etc.)
+05-integration/.secrets/
+*.pem
+
 # G2 CDK (04-cloud/cdk)
 04-cloud/cdk/node_modules/
 04-cloud/cdk/cdk.out/

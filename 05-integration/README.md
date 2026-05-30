@@ -42,9 +42,10 @@ MPPT ×N ──► Cerbo GX (Venus OS · Modbus TCP Server)
 ## 007 本地起步
 
 1. 复制凭据：`cp 05-integration/.env.example 05-integration/.env`（或从 `003_IQTrailer/.env` 同步 · **勿提交**）  
-2. VRM 预检：`python 05-integration/scripts/vrm_cerbo_preflight.py`  
-3. 交接报告：[`docs/deliveries/VRM_CERBO_PREFLIGHT_007_HANDOFF.md`](docs/deliveries/VRM_CERBO_PREFLIGHT_007_HANDOFF.md)  
-4. Modbus 寄存器：[`cerbo/modbus-register-map.md`](cerbo/modbus-register-map.md) · EDGE-T2：[`rut/README.md`](rut/README.md)
+2. VPN 密钥：`05-integration/.secrets/iqwatch-vpn-key.pem`（gitignored · Windows 须 `icacls` 仅当前用户可读）  
+3. VRM 预检：`python 05-integration/scripts/vrm_cerbo_preflight.py`  
+4. 交接报告：[`docs/deliveries/VRM_CERBO_PREFLIGHT_007_HANDOFF.md`](docs/deliveries/VRM_CERBO_PREFLIGHT_007_HANDOFF.md)  
+5. Modbus 寄存器：[`cerbo/modbus-register-map.md`](cerbo/modbus-register-map.md) · EDGE-T2：[`rut/README.md`](rut/README.md)
 
 ---
 

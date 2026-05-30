@@ -4,6 +4,16 @@
 
 ---
 
+## 2026-05-30 — VPN 跳板密钥就位（`.secrets/` · Bob 确认）
+
+- **`05-integration/.secrets/iqwatch-vpn-key.pem`** — EC2 `WireGuard-VPN-Server` **`52.5.62.66`** · 用户 `ubuntu`
+- 根 `.gitignore` 已含 `05-integration/.secrets/`、`*.pem`
+- Windows OpenSSH 须收紧 ACL：`icacls .secrets\iqwatch-vpn-key.pem /inheritance:r` + `/grant:r "%USERNAME%:(R)"`
+- **RUT241** VPN IP **`10.24.121.199`** · SSH `admin`/`root` · 密码见凭据库（台架）
+- **状态**: 密钥格式 ✅ · 权限已修 ✅ · 出站 TCP 22 至跳板机 **时通时断** · RUT 密码登录 **待网络稳定复测**
+
+---
+
 ## 2026-05-30 — VRM API 预检 PASS（007 可开工 Cerbo 集成）
 
 - T1–T6 全过 · 站点 **964243 ST-03** · Gateway **`c0619ab6be37`**
