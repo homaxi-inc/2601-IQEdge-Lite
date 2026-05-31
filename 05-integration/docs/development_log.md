@@ -4,6 +4,24 @@
 
 ---
 
+## 2026-05-31 — EDGE-T3 关闭（008 证据归档 + SIGNOFF）
+
+- 007 Timestream PASS 后 008 完成：Shadow · Lambda ingest · Registry · MQTT 样本
+- 签收：[`SIGNOFF-2026-05-31.md`](../../04-cloud/docs/verification/G2-CERBO-IQ-26-60001-2026-05-30/SIGNOFF-2026-05-31.md)
+- **008 交叉验证**: `verify_g2_telemetry.py --sys-id IQ-26-60001` → 6 rows PASS
+- **里程碑**: EDGE-T2 + EDGE-T3 **关闭**
+
+---
+
+## 2026-05-31 — EDGE-T3 Timestream PASS（007 · IQ-26-60001）
+
+- RUT Lua 重部署 · `SYS_ID=IQ-26-60001` · G2 Topic ~60 s
+- `verify_g2_telemetry.py --sys-id IQ-26-60001` → **PASS**（3 行 · SOC 66% · 26 V · load 16 W）
+- 证据：[`04-cloud/docs/verification/G2-CERBO-IQ-26-60001-2026-05-30/04-timestream-query/`](../../04-cloud/docs/verification/G2-CERBO-IQ-26-60001-2026-05-30/04-timestream-query/)
+- 008 通知：[`01-firmware/report/NOTICE_007_to_008_IQ-26-60001_CERBO_EDGE-T3_2026-05-31.md`](../../01-firmware/report/NOTICE_007_to_008_IQ-26-60001_CERBO_EDGE-T3_2026-05-31.md)
+
+---
+
 ## 2026-05-30 — VPN 跳板密钥就位（`.secrets/` · Bob 确认）
 
 - **`05-integration/.secrets/iqwatch-vpn-key.pem`** — EC2 `WireGuard-VPN-Server` **`52.5.62.66`** · 用户 `ubuntu`
@@ -11,6 +29,40 @@
 - Windows OpenSSH 须收紧 ACL：`icacls .secrets\iqwatch-vpn-key.pem /inheritance:r` + `/grant:r "%USERNAME%:(R)"`
 - **RUT241** VPN IP **`10.24.121.199`** · SSH `admin`/`root` · 密码见凭据库（台架）
 - **状态**: 密钥格式 ✅ · 权限已修 ✅ · 出站 TCP 22 至跳板机 **时通时断** · RUT 密码登录 **待网络稳定复测**
+
+---
+
+## 2026-05-30 — IQTrailer 台架 sys_id 定稿：`IQ-26-60001`
+
+- Bob 定稿：由 `IQ-26-06001` 改为 **`IQ-26-60001`**
+- 同步：Lua · Registry/telemetry 样例 · VRM preflight · EDGE-T3 验收目录
+- **008**：Registry re-seed ✅
+- **007**：RUT Lua re-deploy ✅ · Timestream PASS ✅
+
+---
+
+## 2026-05-30 — EDGE-T2 台架：G2 Data to Server 上线 + Modbus 60 s
+
+- **Modbus** poll **300 → 60 s** · Legacy `iot/rut241/status` 保留（period 60 s）
+- **G2** 新增 Collection → `iqedge/g2/dev/energy/telemetry` · Lua 对齐 `telemetry-iqtrailer-cerbo-live.v1.json`
+- **删除** Legacy IQCloud delta collection（`iqcloud/energy_telemetry`）
+- 文档：[`rut/data-to-server-g2-energy.md`](../rut/data-to-server-g2-energy.md) · Lua [`rut/lua/g2_energy_format.lua`](../rut/lua/g2_energy_format.lua)
+- 验收：`datasender.collection.31` input/format/mqtt **success=1**
+
+---
+
+## 2026-05-30 — Time To Go 缩放入册（846 · scalefactor 0.01）
+
+- Victron `/Dc/Battery/TimeToGo` · RUT First **847** · `time_to_go_sec = raw × 100`
+- 更新：[`cerbo/modbus-register-map.md`](../cerbo/modbus-register-map.md) · [`G2_Cerbo_Modbus_Register_and_RUT_Client_Summary.md`](../cerbo/docs/G2_Cerbo_Modbus_Register_and_RUT_Client_Summary.md)
+
+---
+
+## 2026-05-30 — RUT VPN 远程访问实连 PASS（10.24.121.199）
+
+- 经 AWS 跳板 `52.5.62.66` → WireGuard → **`10.24.121.199`**（`Homaxi-test-6004727310` · SN `6004727310`）
+- Layer 1：`wg show` handshake 正常 → Ping 0% 丢包 → SSH root 成功 → LAN 见 `einstein` / `IPC`
+- 文档：[`docs/vpn-rut-remote-access.md`](vpn-rut-remote-access.md)
 
 ---
 

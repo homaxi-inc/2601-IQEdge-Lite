@@ -35,6 +35,7 @@ MPPT ×N ──► Cerbo GX (Venus OS · Modbus TCP Server)
 | [`rut/`](rut/) | RUT MQTT 发布 · Topic 映射 · 脚本/配置 |
 | [`iqtrailer/`](iqtrailer/) | Trailer 场景总览 · 验收清单 |
 | [`docs/vrm-api-local-credentials.md`](docs/vrm-api-local-credentials.md) | VRM API 本地凭据说明（`.env` gitignored） |
+| [`docs/vpn-rut-remote-access.md`](docs/vpn-rut-remote-access.md) | RUT VPN 远程 SSH（经 EC2 跳板 · 007 现场诊断） |
 | [`docs/`](docs/) | 集成开发日志 · open issues |
 
 ---
@@ -66,6 +67,7 @@ MPPT ×N ──► Cerbo GX (Venus OS · Modbus TCP Server)
 | Energy payload | [`09-contract/schemas/energy/telemetry.v1.json`](../09-contract/schemas/energy/telemetry.v1.json) · `component_role=cerbo` |
 | 系统模型 §3.4 | [`02-backend/docs/G2_System_Model.md`](../02-backend/docs/G2_System_Model.md) |
 | M4/M5 里程碑 | [`04-cloud/docs/G2_Implementation_Task_Breakdown.md`](../04-cloud/docs/G2_Implementation_Task_Breakdown.md) |
+| **008 Cerbo 联调** | [`G2_CERBO_008_007_Handoff.md`](../04-cloud/docs/G2_CERBO_008_007_Handoff.md) · [`NOTICE_008_to_007_CERBO_EDGE-T3.md`](../04-cloud/docs/NOTICE_008_to_007_CERBO_EDGE-T3.md) |
 
 ---
 
@@ -74,8 +76,8 @@ MPPT ×N ──► Cerbo GX (Venus OS · Modbus TCP Server)
 | ID | 内容 | 状态 |
 |----|------|------|
 | EDGE-T1 | Cerbo Modbus 寄存器图 | ✅ MVP（ADR-012 D-9） |
-| EDGE-T2 | RUT Data to Server → G2 JSON | ⬜ |
-| EDGE-T3 | 台架验收（对齐 M4/M5） | ⬜ |
+| EDGE-T2 | RUT Data to Server → G2 JSON | ✅ 台架 dev 已发 |
+| EDGE-T3 | M4 ingest 联调 · Timestream | 🟡 008 P0 就绪 · 待实包验收 |
 
 ---
 

@@ -22,8 +22,9 @@ Policy attach：[`04-cloud/scripts/attach_g2_iot_policy.py`](../../04-cloud/scri
 
 | 轨 | Topic 示例 | 说明 |
 |----|------------|------|
-| **Legacy** | `iot/rut241/status` | 现网 · **不改造**（M5.2） |
-| **G2 energy** | `iqedge/g2/{env}/energy/telemetry` | Cerbo 汇聚 · `component_role=cerbo` |
+| **Legacy** | `iot/rut241/status` | 现网 · **保留**（M5.2） |
+| ~~IQCloud~~ | ~~`iqcloud/energy_telemetry`~~ | **已禁用**（台架 2026-05-30） |
+| **G2 energy** | `iqedge/g2/{env}/energy/telemetry` | Cerbo 汇聚 · **台架已发 dev** |
 | **G2 network** | `iqedge/g2/{env}/network/telemetry` | RSSI · GPS · 在线状态（M5） |
 
 `{env}` = `dev` | `prod` — 严禁跨环境 publish（G2 IoT Policy Deny）。
@@ -33,7 +34,7 @@ Policy attach：[`04-cloud/scripts/attach_g2_iot_policy.py`](../../04-cloud/scri
 ## EDGE-T2 · Data to Server 流程
 
 ```text
-Modbus Client (10s) → 变量/寄存器缓存
+Modbus Client (60s) → 变量/寄存器缓存
         ↓
 Data to Server 规则 → JSON 组装（sys_id, component_id, measures.*）
         ↓
@@ -42,8 +43,8 @@ MQTT publish → iqedge/g2/{env}/energy/telemetry
 
 | 配置块 | 说明 |
 |--------|------|
-| Modbus Client | 见 [`../cerbo/modbus-register-map.md`](../cerbo/modbus-register-map.md) |
-| Data to Server | 自定义 JSON · 对齐 [`telemetry-iqtrailer-cerbo-live.v1.json`](../../09-contract/examples/energy/telemetry-iqtrailer-cerbo-live.v1.json) |
+| Modbus Client | 见 [`../cerbo/modbus-register-map.md`](../cerbo/modbus-register-map.md) · period **60 s** |
+| Data to Server | [`data-to-server-g2-energy.md`](data-to-server-g2-energy.md) · Lua [`lua/g2_energy_format.lua`](lua/g2_energy_format.lua) |
 | `component_id` | Cerbo Venus **uniqueId**（与 Registry 一致 · D-3） |
 | `firmware_version` | **省略**（ADR-012 豁免） |
 | `data_stale` | RUT 侧：> **25 min** 无成功 Modbus 读 → `true` |

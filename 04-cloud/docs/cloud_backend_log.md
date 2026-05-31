@@ -6,6 +6,17 @@
 
 ---
 
+## 2026-05-30 — IQTrailer 台架 sys_id：`IQ-26-60001` + EDGE-T3 P0
+
+**变更**: Bob 定稿 `IQ-26-06001` → **`IQ-26-60001`**（Lua · Registry 样例 · 验收目录）  
+**008 P0**: Registry re-seed · M4 redeploy（ADR-012）· G2 Policy on `RUT241_71DC`  
+**文档**: [`G2_CERBO_008_007_Handoff.md`](G2_CERBO_008_007_Handoff.md) · [`NOTICE_008_to_007_CERBO_EDGE-T3.md`](NOTICE_008_to_007_CERBO_EDGE-T3.md)  
+**验收**: [`verification/G2-CERBO-IQ-26-60001-2026-05-30/`](verification/G2-CERBO-IQ-26-60001-2026-05-30/README.md)  
+**007**: re-deploy RUT Lua · 确认 MQTT G2 持续发包  
+**下一步**: `verify_g2_telemetry.py --sys-id IQ-26-60001` · Timestream 有行后 EDGE-T3 收口
+
+---
+
 ## 2026-05-30 — ADR-012 IQTrailer Cerbo 边缘定稿
 
 **决策**: Bob D-1～D-10（D-6 遗留 OI-001）  

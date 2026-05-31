@@ -46,14 +46,15 @@
 |------|------|
 | ✅ 已提炼 | PDF RUT Client 参数 · Excel 3.73 寄存器 · RUT **+1** 偏移 |
 | ✅ G2 文档 | [`G2_Cerbo_Modbus_Register_and_RUT_Client_Summary.md`](G2_Cerbo_Modbus_Register_and_RUT_Client_Summary.md) · [`modbus-register-map.md`](../modbus-register-map.md) |
-| ⬜ 未提供 | RUT Data to Server / 脚本 → G2 MQTT（EDGE-T2） |
+| ✅ EDGE-T2 | RUT Data to Server → G2 MQTT · 见 [`../../rut/data-to-server-g2-energy.md`](../../rut/data-to-server-g2-energy.md) |
 
 **G2 仓库对应待办**:
 
 | ID | 产出 | 路径 |
 |----|------|------|
 | **EDGE-T1** | ✅ MVP 寄存器表 | [`modbus-register-map.md`](../modbus-register-map.md) |
-| **EDGE-T2** | RUT 轮询 + G2 JSON + MQTT | [`../../rut/`](../../rut/) |
+| **EDGE-T2** | ✅ RUT → G2 JSON + MQTT | [`../../rut/data-to-server-g2-energy.md`](../../rut/data-to-server-g2-energy.md) |
+| **EDGE-T3** | M4 ingest 联调 | [`04-cloud/docs/G2_CERBO_008_007_Handoff.md`](../../../04-cloud/docs/G2_CERBO_008_007_Handoff.md) |
 
 ---
 

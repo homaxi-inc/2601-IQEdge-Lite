@@ -36,6 +36,7 @@ MPPT ×N → Cerbo GX → [Modbus TCP 读] → RUT → G2 MQTT → Timestream (t
 | **V** | 电池电压 | V | `voltage_v` | 24 V 系统常见约 22–32 V |
 | **I** | 电池电流 | A | `current_a` | **负 = 放电**；**正 = 充电**（Victron / SmartShunt 约定） |
 | **SOC** | 荷电状态 | % | `soc_pct` | 0–100 |
+| **TTG** | Time to go | s（VRM 显示 h） | `time_to_go_sec` | Modbus **846** raw **`× 100`** → 秒；例 raw 8640 → **864,000 s = 240 h**（见 [`modbus-register-map.md`](../modbus-register-map.md) § Time To Go） |
 | **ScS**（MPPT 侧） | 充电阶段 | enum | `charge_state` / `charge_state_code` | Off · Bulk · Absorption · Float · Fault |
 
 告警类（AL、AH、ASoc 等）G2 MVP **可不**上送；若扩展 `status`/`state`，需单独 Schema 版本。

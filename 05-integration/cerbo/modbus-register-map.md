@@ -17,10 +17,39 @@
 | `Battery_SoC` | 843 | **844** | 3 | UINT16 | 1 | `battery.soc_pct` |
 | `Battery_State` | 844 | **845** | 3 | UINT16 | 1 | `battery.charge_state_code` |
 | `PV_Power` | 850 | **851** | 3 | UINT16 | 1 | `solar.power_w` |
+| `DC_System_Power` | 860 | **861** | 3 | **INT16** | 1 | `power_management.dc_system_power_w` |
+| `Time_To_Go` | 846 | **847** | 3 | UINT16 | **0.01** | `battery.time_to_go_sec`（见 § Time To Go） |
 
 **连接**: host = Cerbo 静态 IP · port **502** · server id **100**
 
 `load.power_w` = `solar.power_w − battery.voltage_v × battery.current_a`（≥ 0）
+
+---
+
+## ⚠️ Time To Go（寄存器 846 · 必读）
+
+> **Victron 官方**（`dbus_modbustcp` · register list 3.73）：`com.victronenergy.system` · `/Dc/Battery/TimeToGo` · **846** · uint16 · **scalefactor 0.01** · 单位 **秒 (s)**  
+> **RUT First Register** = **847**（Victron 地址 **+1**）
+
+| 步骤 | 公式 / 示例 |
+|------|-------------|
+| RUT Modbus Client | 读 **raw**（例：`8640`）— **不在 RUT 侧缩放** |
+| Victron 解码 | `time_to_go_sec = raw / 0.01 = raw × 100` |
+| 示例 | `8640 → 864,000 s = 240 h = 10 d` |
+| G2 `measures.battery` | `time_to_go_sec`: **864000**（整数秒） |
+| VRM 交叉校验 | SmartShunt **TTG** 应为 **`240.00 h`** 量级（同 raw 8640） |
+
+**常见错误（禁止）**:
+
+| 错误理解 | 后果 |
+|----------|------|
+| 把 raw 当 **分钟** | `8640 min` ≈ 144 h — 与 VRM **240 h** 不符 |
+| 用 `raw × 0.01` | `86.4 s` — 与 Victron scalefactor 语义相反 |
+| 正确 | **`raw × 100`** 或 **`raw / 0.01`** → 秒 |
+
+Legacy IQCloud Lambda（`003_IQTrailer`）入库：`Time_To_Go × 100.0` → 秒。G2 Data to Server / ingest 须一致。
+
+**台架实连（2026-05-30）**: RUT tag `1.7` raw **8640** · VRM ST-03 TTG **240.00 h** · 验证 **×100 秒** 正确。
 
 ---
 
@@ -40,7 +69,7 @@
 
 | 项 | 值 |
 |----|-----|
-| Period | 10 s |
+| Period | **60 s** |
 | Timeout | 5 s |
 | Always reconnect | ON |
 | Function | Read Holding Registers (3) |

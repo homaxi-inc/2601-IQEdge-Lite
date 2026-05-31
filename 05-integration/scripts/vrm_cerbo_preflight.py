@@ -40,7 +40,7 @@ except ImportError as exc:
         f"Need vrm_client from {TEST_ROOT}. pip install -r 04-test/requirements.txt"
     ) from exc
 
-DEFAULT_SITE = "964243"  # ST-03 · IQTrailer lab
+DEFAULT_SITE = "964243"  # ST-03 � IQTrailer lab
 BATTERY_INSTANCE = 278
 SOLAR_INSTANCE = 277
 
@@ -115,7 +115,7 @@ def main() -> int:
         "siteIds": [s.get("idSite") for s in sites if s.get("idSite")],
     }
 
-    # T3 System overview · Cerbo/Gateway id
+    # T3 System overview � Cerbo/Gateway id
     overview = get_json(f"/installations/{site}/system-overview")
     devices = (overview.get("records") or {}).get("devices") or []
     gateway = find_gateway(devices)
@@ -149,7 +149,7 @@ def main() -> int:
         "metrics": {k: bat_m[k] for k in ("V", "I", "SOC") if k in bat_m},
     }
 
-    # T5 Solar realtime + yield (MPPT widget · cross-check Modbus 850 / solarcharger)
+    # T5 Solar realtime + yield (MPPT widget � cross-check Modbus 850 / solarcharger)
     sol = get_json(f"/installations/{site}/widgets/SolarChargerSummary?instance={SOLAR_INSTANCE}")
     sol_m = extract_widget_metrics(sol.get("records") or {})
     results["tests"]["T5_solar_realtime"] = {
@@ -169,7 +169,7 @@ def main() -> int:
     results["tests"]["T6_stats_live_feed"] = {
         "pass": "bv" in latest and "bs" in latest,
         "latest": latest,
-        "warning": "total_solar_yield is normalized internal scale — use YT/YY widgets for kWh",
+        "warning": "total_solar_yield is normalized internal scale - use YT/YY widgets for kWh",
     }
 
     # G2 bench reference snapshot
@@ -184,7 +184,7 @@ def main() -> int:
     )
 
     results["g2BenchReference"] = {
-        "sys_id": "IQ-26-06001",
+        "sys_id": "IQ-26-60001",
         "component_id_cerbo": gw_id,
         "component_role": "cerbo",
         "registry_mppt_serial": next(
@@ -200,7 +200,7 @@ def main() -> int:
             "yield.today_kwh": sol_m.get("YT", {}).get("valueFloat"),
             "yield.yesterday_kwh": sol_m.get("YY", {}).get("valueFloat"),
         },
-        "modbus_mvp_registers_unit_100": "840-844, 850 — see cerbo/modbus-register-map.md",
+        "modbus_mvp_registers_unit_100": "840-844, 850 - see cerbo/modbus-register-map.md",
         "data_stale_threshold_min": 25,
         "vrm_seconds_ago": max_ago,
         "vrm_logging_interval_sec": (gateway or {}).get("loggingInterval"),
@@ -215,7 +215,7 @@ def main() -> int:
 
     print(f"VRM Cerbo preflight site={site} pass={results['pass']}")
     print(f"  Gateway component_id: {gw_id}")
-    print(f"  V={v}V I={i}A SOC={soc}% ScW={solar_w}W load≈{load_w:.1f}W")
+    print(f"  V={v}V I={i}A SOC={soc}% ScW={solar_w}W load?{load_w:.1f}W")
     print(f"  YT={sol_m.get('YT', {}).get('valueFloat')} YY={sol_m.get('YY', {}).get('valueFloat')} kWh")
     print(f"  secondsAgo={max_ago} (stale if Modbus fail >25min)")
     print(f"Wrote {args.output}")

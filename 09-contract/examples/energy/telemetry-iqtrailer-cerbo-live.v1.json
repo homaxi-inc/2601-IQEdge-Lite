@@ -1,6 +1,6 @@
 {
   "schema_version": "energy.telemetry.v1",
-  "sys_id": "IQ-26-06001",
+  "sys_id": "IQ-26-60001",
   "component_id": "c0619ab6be37",
   "component_role": "cerbo",
   "domain": "energy",

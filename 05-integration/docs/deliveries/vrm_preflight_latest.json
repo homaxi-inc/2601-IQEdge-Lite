@@ -145,11 +145,11 @@
           ]
         }
       },
-      "warning": "total_solar_yield is normalized internal scale — use YT/YY widgets for kWh"
+      "warning": "total_solar_yield is normalized internal scale - use YT/YY widgets for kWh"
     }
   },
   "g2BenchReference": {
-    "sys_id": "IQ-26-06001",
+    "sys_id": "IQ-26-60001",
     "component_id_cerbo": "c0619ab6be37",
     "component_role": "cerbo",
     "registry_mppt_serial": "HQ2441HWTFQ",
@@ -162,7 +162,7 @@
       "yield.today_kwh": 0.4,
       "yield.yesterday_kwh": 0.44
     },
-    "modbus_mvp_registers_unit_100": "840-844, 850 — see cerbo/modbus-register-map.md",
+    "modbus_mvp_registers_unit_100": "840-844, 850 - see cerbo/modbus-register-map.md",
     "data_stale_threshold_min": 25,
     "vrm_seconds_ago": 501,
     "vrm_logging_interval_sec": 900
