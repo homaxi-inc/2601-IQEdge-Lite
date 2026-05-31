@@ -6,14 +6,24 @@
 
 ---
 
+## 2026-05-31 — Cerbo EDGE-T3 HIL 关闭（IQ-26-60001）
+
+**007**: RUT Lua re-deploy · Timestream **PASS**（~60 s · SOC 66% · 26 V）  
+**008**: Shadow + Lambda + Registry 证据归档 · `verify_g2_telemetry.py` 交叉验证 **PASS**  
+**签收**: [`verification/G2-CERBO-IQ-26-60001-2026-05-30/SIGNOFF-2026-05-31.md`](verification/G2-CERBO-IQ-26-60001-2026-05-30/SIGNOFF-2026-05-31.md)  
+**Git**: `e1bf5cb` + EDGE-T3 证据 commit · pushed to `origin/main`  
+**非阻塞**: Yield OI-002 · Fleet API M10 · RUT Thing 映射 Phase 2
+
+---
+
 ## 2026-05-30 — IQTrailer 台架 sys_id：`IQ-26-60001` + EDGE-T3 P0
 
 **变更**: Bob 定稿 `IQ-26-06001` → **`IQ-26-60001`**（Lua · Registry 样例 · 验收目录）  
 **008 P0**: Registry re-seed · M4 redeploy（ADR-012）· G2 Policy on `RUT241_71DC`  
 **文档**: [`G2_CERBO_008_007_Handoff.md`](G2_CERBO_008_007_Handoff.md) · [`NOTICE_008_to_007_CERBO_EDGE-T3.md`](NOTICE_008_to_007_CERBO_EDGE-T3.md)  
 **验收**: [`verification/G2-CERBO-IQ-26-60001-2026-05-30/`](verification/G2-CERBO-IQ-26-60001-2026-05-30/README.md)  
-**007**: re-deploy RUT Lua · 确认 MQTT G2 持续发包  
-**下一步**: `verify_g2_telemetry.py --sys-id IQ-26-60001` · Timestream 有行后 EDGE-T3 收口
+**007**: re-deploy RUT Lua ✅ · `verify_g2_telemetry.py` **PASS**（2026-05-31）  
+**下一步**: 008 Shadow + ingest 证据 + push · EDGE-T3 SIGNOFF · 见 [`NOTICE_007_to_008_IQ-26-60001_CERBO_EDGE-T3_2026-05-31.md`](../../01-firmware/report/NOTICE_007_to_008_IQ-26-60001_CERBO_EDGE-T3_2026-05-31.md)
 
 ---
 

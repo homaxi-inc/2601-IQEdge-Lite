@@ -1,0 +1,35 @@
+{
+  "sys_id": "IQ-26-60001",
+  "track": "g2",
+  "system_type": "iqtrailer",
+  "id_format": "iq_y1",
+  "deployment_state": "qa_bench",
+  "cloud_target": "dev",
+  "domains_enabled": ["energy", "network", "vision", "control"],
+  "components": {
+    "energy": [
+      {
+        "component_id": "c0619ab6be37",
+        "role": "cerbo",
+        "description": "ST-03 Gateway uniqueId - VRM preflight 2026-05-30 (ADR-012 D-3)"
+      },
+      {
+        "component_id": "HQ2441HWTFQ",
+        "role": "mppt",
+        "description": "Asset inventory only; not energy ingest primary (ADR-012 D-7)"
+      }
+    ],
+    "network": [
+      {
+        "component_id": "6004727310",
+        "role": "router_4g",
+        "thing_name": "RUT241_71DC",
+        "description": "Homaxi-test bench - VPN 10.24.121.199 - mqtt RUT241_6004727310_g2"
+      }
+    ]
+  },
+  "aliases": {
+    "mppt_serial": "HQ2441HWTFQ"
+  },
+  "updated_at": "2026-05-31T03:09:19Z"
+}

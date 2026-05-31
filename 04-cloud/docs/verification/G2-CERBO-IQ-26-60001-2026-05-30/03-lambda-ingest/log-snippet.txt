@@ -1,0 +1,12 @@
+# CloudWatch /aws/lambda/iqedge-g2-dev-fn-ingest-energy
+# Window: 2026-05-31T03:13–03:17 UTC · filter: 60001
+# 008 · EDGE-T3 Cerbo IQTrailer
+
+[INFO] 2026-05-31T03:13:15.911Z event={"sys_id": "IQ-26-60001", "component_id": "c0619ab6be37", "component_role": "cerbo", "system_type": "iqtrailer", ...}
+[INFO] 2026-05-31T03:13:16.194Z ingest_ok sys_id=IQ-26-60001 component_id=c0619ab6be37 iqtrailer=True fw=(exempt) measures=5
+[INFO] 2026-05-31T03:14:15.821Z ingest_ok sys_id=IQ-26-60001 component_id=c0619ab6be37 iqtrailer=True fw=(exempt) measures=5
+[INFO] 2026-05-31T03:15:15.782Z ingest_ok sys_id=IQ-26-60001 component_id=c0619ab6be37 iqtrailer=True fw=(exempt) measures=5
+[INFO] 2026-05-31T03:16:16.374Z ingest_ok sys_id=IQ-26-60001 component_id=c0619ab6be37 iqtrailer=True fw=(exempt) measures=5
+[INFO] 2026-05-31T03:17:16.004Z ingest_ok sys_id=IQ-26-60001 component_id=c0619ab6be37 iqtrailer=True fw=(exempt) measures=5
+
+# ADR-012: firmware_version omitted · iqtrailer=True · fw gate exempt

@@ -67,7 +67,7 @@ MPPT ×N ──► Cerbo GX (Venus OS · Modbus TCP Server)
 | Energy payload | [`09-contract/schemas/energy/telemetry.v1.json`](../09-contract/schemas/energy/telemetry.v1.json) · `component_role=cerbo` |
 | 系统模型 §3.4 | [`02-backend/docs/G2_System_Model.md`](../02-backend/docs/G2_System_Model.md) |
 | M4/M5 里程碑 | [`04-cloud/docs/G2_Implementation_Task_Breakdown.md`](../04-cloud/docs/G2_Implementation_Task_Breakdown.md) |
-| **008 Cerbo 联调** | [`G2_CERBO_008_007_Handoff.md`](../04-cloud/docs/G2_CERBO_008_007_Handoff.md) · [`NOTICE_008_to_007_CERBO_EDGE-T3.md`](../04-cloud/docs/NOTICE_008_to_007_CERBO_EDGE-T3.md) |
+| **008 Cerbo 联调** | [`G2_CERBO_008_007_Handoff.md`](../04-cloud/docs/G2_CERBO_008_007_Handoff.md) · [`NOTICE_007_to_008_IQ-26-60001_CERBO_EDGE-T3_2026-05-31.md`](../01-firmware/report/NOTICE_007_to_008_IQ-26-60001_CERBO_EDGE-T3_2026-05-31.md) |
 
 ---
 
@@ -76,8 +76,8 @@ MPPT ×N ──► Cerbo GX (Venus OS · Modbus TCP Server)
 | ID | 内容 | 状态 |
 |----|------|------|
 | EDGE-T1 | Cerbo Modbus 寄存器图 | ✅ MVP（ADR-012 D-9） |
-| EDGE-T2 | RUT Data to Server → G2 JSON | ✅ 台架 dev 已发 |
-| EDGE-T3 | M4 ingest 联调 · Timestream | 🟡 008 P0 就绪 · 待实包验收 |
+| EDGE-T2 | RUT Data to Server → G2 JSON | ✅ Timestream PASS · `IQ-26-60001` |
+| EDGE-T3 | M4 ingest 联调 · Timestream | ✅ **PASS** · [`SIGNOFF`](../04-cloud/docs/verification/G2-CERBO-IQ-26-60001-2026-05-30/SIGNOFF-2026-05-31.md) |
 
 ---
 

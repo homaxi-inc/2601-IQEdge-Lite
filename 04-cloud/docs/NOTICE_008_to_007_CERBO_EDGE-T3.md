@@ -23,7 +23,8 @@
    - 周期: **~60 s**
 
 2. **重新部署 Lua**（`SYS_ID` 已改为 **`IQ-26-60001`**）  
-   - 见 [`rut_apply_g2_edge_t2.sh`](../../05-integration/scripts/rut_apply_g2_edge_t2.sh)
+   - 见 [`rut_apply_g2_edge_t2.sh`](../../05-integration/scripts/rut_apply_g2_edge_t2.sh)  
+   - **007 已完成** 2026-05-31 · Timestream **PASS**
 
 3. **5–10 分钟后** 008/007 共跑：
 
@@ -41,8 +42,8 @@ python 01-firmware/tools/aws-verify/verify_g2_telemetry.py --sys-id IQ-26-60001 
 
 ## 当前观测
 
-- **Timestream**: `IQ-26-60001` **0 行**（旧 ID seed 无效 · 007 须重发新 sys_id）
-- **Lambda 日志**（近 3 h）: 仅 IQWatch `IQ-26-00001` · **无** Cerbo 包
+- **Timestream**: `IQ-26-60001` **PASS** — EDGE-T3 **关闭** · [`SIGNOFF`](verification/G2-CERBO-IQ-26-60001-2026-05-30/SIGNOFF-2026-05-31.md)
+- **Lambda 日志**: 已归档 [`03-lambda-ingest/`](verification/G2-CERBO-IQ-26-60001-2026-05-30/03-lambda-ingest/)
 
 ---
 

@@ -67,9 +67,9 @@
 
 | # | 任务 | 产出 |
 |---|------|------|
-| C9 | 验证目录 | [`verification/G2-CERBO-IQ-26-60001-2026-05-30/`](verification/G2-CERBO-IQ-26-60001-2026-05-30/README.md) |
-| C10 | Bob 签收 | `SIGNOFF`（参照 IQWatch HIL） |
-| C11 | `cloud_backend_log.md` + `05-integration/development_log` | EDGE-T3 关闭 |
+| C9 | 验证目录 | [`verification/G2-CERBO-IQ-26-60001-2026-05-30/`](verification/G2-CERBO-IQ-26-60001-2026-05-30/README.md) | ✅ SIGNOFF 2026-05-31 |
+| C10 | Bob 签收 | [`SIGNOFF-2026-05-31.md`](verification/G2-CERBO-IQ-26-60001-2026-05-30/SIGNOFF-2026-05-31.md) | ✅ 008 归档 |
+| C11 | `cloud_backend_log.md` + `05-integration/development_log` | EDGE-T3 关闭 | ✅ |
 
 ### P3 — 联调后（非阻塞）
 

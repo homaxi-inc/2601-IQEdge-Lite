@@ -1,0 +1,15 @@
+# Timestream query result (007 verify_g2_telemetry.py · 2026-05-31 UTC)
+
+Command:
+  python 01-firmware/tools/aws-verify/verify_g2_telemetry.py --sys-id IQ-26-60001 --minutes 30
+
+Result: PASS
+
+OK: 3 row(s) (showing up to 25)
+{'sys_id': 'IQ-26-60001', 'component_id': 'c0619ab6be37', 'time': '2026-05-31 03:15:15.000000000', 'measure_name': 'g2_energy', 'battery_soc_pct': '66.0', 'battery_voltage_v': '26.0', 'solar_power_w': '0.0', 'load_power_w': '16.0', 'yield_total_kwh': '', 'yield_today_kwh': ''}
+{'sys_id': 'IQ-26-60001', 'component_id': 'c0619ab6be37', 'time': '2026-05-31 03:14:15.000000000', 'measure_name': 'g2_energy', 'battery_soc_pct': '66.0', 'battery_voltage_v': '26.0', 'solar_power_w': '0.0', 'load_power_w': '16.0', 'yield_total_kwh': '', 'yield_today_kwh': ''}
+{'sys_id': 'IQ-26-60001', 'component_id': 'c0619ab6be37', 'time': '2026-05-31 03:13:14.000000000', 'measure_name': 'g2_energy', 'battery_soc_pct': '66.0', 'battery_voltage_v': '26.0', 'solar_power_w': '0.0', 'load_power_w': '16.0', 'yield_total_kwh': '', 'yield_today_kwh': ''}
+
+Cadence: ~60 s · component_id=c0619ab6be37 (Cerbo ST-03)
+
+Note: Prior sys_id IQ-26-06001 rows still present from pre-migration Lua (~02:47–03:11 UTC); new ingest uses IQ-26-60001 only after 007 re-deploy.
